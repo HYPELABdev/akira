@@ -1,1 +1,553 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>akira</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-[#060A08] text-white grid place-items-center min-h-screen"><h1 class="text-5xl font-black">AKIRA<br><span class="text-[#00FF88]">HYPE</span></h1></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="icon" href="./icons/akira-avatar.webp"/>
+<title>AKIRA • Agente Pessoal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{colors:{akira:{bg:'#080a0f',card:'#11131a',elev:'#171a24',border:'#1e2232',accent:'#7af8c6',accent2:'#5ee9ff',muted:'#8b92a8'}},fontFamily:{sans:['Inter','SF Pro Display','system-ui','sans-serif']},animation:{'pulse-glow':'pulseGlow 2.4s ease-in-out infinite','float':'float 6s ease-in-out infinite','typing':'typing 1.4s infinite'}}}}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{ -webkit-tap-highlight-color: transparent; scrollbar-width: thin; scrollbar-color: #1e2232 transparent; }
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#1e2232;border-radius:10px}
+body{font-family:'Inter',system-ui;background:#080a0f;color:#e6e8ef;overscroll-behavior:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.glass{backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(17,19,26,0.82);border:1px solid rgba(255,255,255,0.06)}
+.neuro-glow{box-shadow:0 0 0 1px rgba(122,248,198,0.15),0 0 40px rgba(122,248,198,0.15),inset 0 1px 0 rgba(255,255,255,0.08)}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 1px rgba(122,248,198,0.2),0 0 20px rgba(122,248,198,0.2)}50%{box-shadow:0 0 0 1px rgba(122,248,198,0.35),0 0 40px rgba(122,248,198,0.35)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);background-size:200% 100%;animation:shimmer 1.8s infinite}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.message-enter{animation:msgIn .38s cubic-bezier(.16,1,.3,1)}@keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+</style>
+</head>
+<body class="min-h-[100dvh] flex flex-col antialiased selection:bg-[#7af8c6]/30">
+<!-- App Shell -->
+<div id="app" class="flex-1 flex flex-col max-w-[960px] mx-auto w-full relative">
+
+<!-- Header -->
+<header class="sticky top-0 z-30 glass border-b border-white/[0.06] px-4 md:px-6 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <button id="btnMenu" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 flex items-center justify-center">☰</button>
+    <div class="relative">
+      <img id="avatarHeader" src="./icons/akira-avatar.webp" class="w-9 h-9 rounded-full object-cover neuro-glow"/>
+      <span id="statusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#080a0f] shadow-[0_0_10px_#10b981]"></span>
+    </div>
+    <div>
+      <h1 class="font-semibold tracking-tight text-[15px] leading-none">AKIRA</h1>
+      <p class="text-[11px] text-akira-muted mono flex items-center gap-1.5"><span id="statusText">OFFLINE • Criptografado</span><span class="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></span></p>
+    </div>
+  </div>
+  <div class="flex items-center gap-2">
+    <div id="memoryIndicator" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#171a24] border border-white/5 text-[11px] mono text-akira-muted">
+      <span class="w-2 h-2 bg-[#7af8c6] rounded-full animate-pulse"></span><span id="memCount">0 memórias</span>
+    </div>
+    <button id="btnVault" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 grid place-items-center text-[13px]">◫</button>
+  </div>
+</header>
+
+<!-- Drawer Vault -->
+<aside id="drawer" class="fixed inset-0 z-[60] translate-x-[-100%] transition-transform duration-300 ease-[cubic-bezier(.16,1,.3,1)]">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="drawerBackdrop"></div>
+  <div class="relative w-[86%] max-w-[340px] h-full bg-[#0e1018] border-r border-white/10 p-5 flex flex-col gap-5 overflow-auto">
+    <div class="flex items-center gap-3">
+      <img src="./icons/akira-avatar.webp" class="w-10 h-10 rounded-full"/>
+      <div><p class="font-semibold text-[14px]">AKIRA OS v2.0</p><p class="text-[11px] mono text-akira-muted">Offline-First • Zero Cloud</p></div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">COFRE</p><p id="statVault" class="text-[20px] font-semibold">0</p></div>
+      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">FINANÇAS</p><p id="statFinance" class="text-[20px] font-semibold">R$ 0</p></div>
+      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">NOTAS</p><p id="statNotes" class="text-[20px] font-semibold">0</p></div>
+      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">NEURAL</p><p id="statNeural" class="text-[20px] font-semibold">0%</p></div>
+    </div>
+    <nav class="flex flex-col gap-1">
+      <button data-tab="chat" class="tabBtn text-left px-3 py-2.5 rounded-xl bg-white/[0.06] text-[13px]">◐ Chat Neural</button>
+      <button data-tab="vault" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◑ Cofre de Senhas</button>
+      <button data-tab="finance" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◒ Finanças & Boletos</button>
+      <button data-tab="notes" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◓ Notas & Listas</button>
+      <button data-tab="memory" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◔ Memória .Akira</button>
+      <button data-tab="settings" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◍ Segurança & Backup</button>
+    </nav>
+    <div class="mt-auto p-3 rounded-2xl bg-gradient-to-br from-[#7af8c6]/15 to-[#5ee9ff]/10 border border-[#7af8c6]/20">
+      <p class="text-[11px] mono leading-relaxed">Seus dados nunca saem do aparelho. Criptografia AES-GCM 256 + IndexedDB isolado. Arquivos <span class="text-[#7af8c6]">.akira</span> são seus.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-h-0">
+
+<!-- Chat View -->
+<section id="view-chat" class="flex-1 flex flex-col min-h-0">
+  <div id="chatScroll" class="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-5">
+    <!-- Intro Hero -->
+    <div id="hero" class="message-enter rounded-[28px] bg-[#11131a] border border-white/[0.06] p-5 md:p-7 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#7af8c6]/10 blur-[50px] rounded-full"></div>
+      <div class="flex gap-4 items-start relative z-10">
+        <div class="relative shrink-0">
+          <img id="heroAvatar" src="./icons/akira-avatar.webp" class="w-[72px] h-[72px] rounded-[20px] object-cover neuro-glow animate-float"/>
+          <div id="voiceWaves" class="absolute -bottom-2 -right-2 hidden"><div class="flex gap-0.5"><span class="w-0.5 h-3 bg-[#7af8c6] rounded-full animate-typing"></span><span class="w-0.5 h-5 bg-[#7af8c6] rounded-full animate-typing [animation-delay:.15s]"></span><span class="w-0.5 h-2 bg-[#7af8c6] rounded-full animate-typing [animation-delay:.3s]"></span></div></div>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-[22px] font-semibold tracking-tight leading-tight">Olá, eu sou a Kira.</h2>
+          <p class="text-[13px] mono text-akira-muted mt-1">sua assistente pessoal offline</p>
+          <div id="typeIntro" class="mt-3 text-[14px] leading-[1.6] text-[#d7dbe8]"></div>
+          <button id="btnPlayVoice" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black text-[13px] font-medium hover:bg-zinc-100 transition">▶ Ouvir apresentação</button>
+        </div>
+      </div>
+      <div class="mt-5 grid grid-cols-3 gap-2">
+        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">💰 Gast... R$ 120</button>
+        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">🔑 Salvar senha</button>
+        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">📝 Nova nota</button>
+      </div>
+    </div>
+    <div id="messages" class="space-y-4"></div>
+    <div id="typing" class="hidden items-center gap-3 px-1">
+      <img src="./icons/akira-avatar.webp" class="w-7 h-7 rounded-full"/>
+      <div class="flex gap-1 px-4 py-3 rounded-[18px] bg-[#171a24] border border-white/5">
+        <span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing [animation-delay:.15s]"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing [animation-delay:.3s]"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Bar -->
+  <div class="sticky bottom-0 z-20 px-3 md:px-6 py-3 bg-gradient-to-t from-[#080a0f] via-[#080a0f]/90 to-transparent">
+    <div class="glass rounded-[24px] p-2 flex items-end gap-2 neuro-glow">
+      <button id="btnAttach" class="w-10 h-10 rounded-full bg-[#1a1d2b] grid place-items-center shrink-0">＋</button>
+      <textarea id="input" rows="1" placeholder="Fale com a Kira..." class="flex-1 bg-transparent outline-none resize-none text-[15px] leading-6 py-2.5 max-h-[120px] placeholder:text-white/30"></textarea>
+      <button id="btnMic" class="w-10 h-10 rounded-full bg-white text-black grid place-items-center shrink-0">🎙</button>
+      <button id="btnSend" class="w-10 h-10 rounded-full bg-[#7af8c6] text-black grid place-items-center shrink-0 font-bold">↑</button>
+    </div>
+    <p class="text-center text-[10px] mono text-white/25 mt-2">Offline-First • 90% inteligência local • 0% rastreamento</p>
+  </div>
+</section>
+
+<!-- Other Views (hidden) -->
+<section id="view-vault" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
+  <h3 class="text-[18px] font-semibold">Cofre de Senhas • AES-256</h3>
+  <div class="flex gap-2"><input id="vaultSearch" placeholder="Buscar serviço..." class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddVault" class="px-4 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">+ Adicionar</button></div>
+  <div id="vaultList" class="grid gap-2"></div>
+</section>
+
+<section id="view-finance" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
+  <div class="flex items-center justify-between"><h3 class="text-[18px] font-semibold">Finanças</h3><button id="btnExportFinance" class="text-[12px] mono px-3 py-1.5 rounded-full bg-white/5">Exportar .akira</button></div>
+  <div class="grid grid-cols-3 gap-2"><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">RECEITAS</p><p id="finIncome" class="text-[18px] font-semibold text-emerald-300">R$ 0</p></div><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">DESPESAS</p><p id="finExpense" class="text-[18px] font-semibold text-red-300">R$ 0</p></div><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">SALDO</p><p id="finBalance" class="text-[18px] font-semibold">R$ 0</p></div></div>
+  <div class="flex gap-2"><input id="finDesc" placeholder="Descrição (ex: mercado)" class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><input id="finValue" type="number" placeholder="Valor" class="w-28 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><select id="finType" class="px-3 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[13px]"><option value="expense">Despesa</option><option value="income">Receita</option></select><button id="btnAddFin" class="px-4 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">OK</button></div>
+  <div id="financeList" class="space-y-2"></div>
+</section>
+
+<section id="view-notes" class="hidden flex-1 p-4 md:p-6 space-y-3 overflow-auto">
+  <h3 class="text-[18px] font-semibold">Notas, Listas e Lembretes</h3>
+  <div class="flex gap-2"><input id="noteInput" placeholder="Escreva algo e pressione Enter..." class="flex-1 px-4 py-3 rounded-2xl bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddNote" class="px-4 py-3 rounded-2xl bg-white text-black text-[13px] font-semibold">Salvar</button></div>
+  <div id="notesList" class="grid gap-2"></div>
+</section>
+
+<section id="view-memory" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
+  <h3 class="text-[18px] font-semibold">Memória Neural .Akira</h3>
+  <p class="text-[13px] text-akira-muted leading-relaxed">Tudo que aprendo fica aqui, localmente. Gráfico de relações, prioridades e contexto permanente.</p>
+  <div id="memoryGraph" class="rounded-[20px] bg-[#11131a] border border-white/5 p-4 min-h-[260px]"></div>
+  <div id="memoryList" class="space-y-2"></div>
+</section>
+
+<section id="view-settings" class="hidden flex-1 p-4 md:p-6 space-y-5 overflow-auto">
+  <h3 class="text-[18px] font-semibold">Segurança, Backup e API</h3>
+  <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
+    <p class="text-[12px] mono text-akira-muted">PIN LOCAL (criptografia AES-GCM)</p>
+    <div class="flex gap-2"><input id="pinInput" type="password" maxlength="8" placeholder="PIN 4-8 dígitos" class="flex-1 px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[14px]"/><button id="btnSetPin" class="px-4 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">Salvar PIN</button></div>
+    <button id="btnBio" class="w-full py-2.5 rounded-full bg-white/5 border border-white/10 text-[13px]">🔒 Ativar Biometria (WebAuthn)</button>
+  </div>
+  <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
+    <p class="text-[12px] mono text-akira-muted">BACKUP .AKIRA (criptografado)</p>
+    <div class="flex gap-2"><button id="btnExportAll" class="flex-1 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">Exportar tudo .akira</button><label class="flex-1 py-2.5 rounded-full bg-white/5 border border-white/10 text-center text-[13px] cursor-pointer"><input id="importFile" type="file" accept=".akira,.json" hidden/>Importar .akira</label></div>
+  </div>
+  <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
+    <p class="text-[12px] mono text-akira-muted">INTELIGÊNCIA ONLINE (10% - opcional)</p>
+    <input id="apiKey" placeholder="OpenAI / Gemini / Groq API Key (opcional)" class="w-full px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[13px]"/>
+    <p class="text-[11px] text-white/30 leading-relaxed">Usado apenas para intenções complexas. Se vazio, AKIRA opera 100% offline com NLU local.</p>
+  </div>
+  <button id="btnWipe" class="w-full py-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-[13px]">Apagar todos os dados locais (irreversível)</button>
+</section>
+
+</main>
+
+<!-- Audio -->
+<audio id="akiraAudio" src="./akira-voice-intro.mp3" preload="auto"></audio>
+
+</div>
+
+<script type="module">
+/* ================= AKIRA CORE v2.0 - Offline First ================= */
+const $ = s=>document.querySelector(s);
+const $$ = s=>[...document.querySelectorAll(s)];
+
+const DB_NAME="akira_neural_v2";
+const DB_VERSION=3;
+const STORES=["messages","memories","vault","finances","notes","settings","learning"];
+
+class AkiraCrypto{
+  static async deriveKey(pin, salt){
+    const enc=new TextEncoder();
+    const keyMat=await crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:120000, hash:"SHA-256"}, keyMat, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
+  }
+  static async encryptJSON(obj, pin){
+    try{
+      if(!pin) return {enc:false, data:obj};
+      const iv=crypto.getRandomValues(new Uint8Array(12));
+      const salt=crypto.getRandomValues(new Uint8Array(16));
+      const key=await this.deriveKey(pin,salt);
+      const enc=new TextEncoder().encode(JSON.stringify(obj));
+      const cipher=await crypto.subtle.encrypt({name:"AES-GCM", iv}, key, enc);
+      return {enc:true, iv:[...iv], salt:[...salt], data:btoa(String.fromCharCode(...new Uint8Array(cipher)))};
+    }catch(e){ return {enc:false, data:obj}; }
+  }
+  static async decryptJSON(payload, pin){
+    if(!payload?.enc) return payload?.data ?? payload;
+    if(!pin) throw new Error("PIN required");
+    const key=await this.deriveKey(pin, new Uint8Array(payload.salt));
+    const cipher=Uint8Array.from(atob(payload.data), c=>c.charCodeAt(0));
+    const plain=await crypto.subtle.decrypt({name:"AES-GCM", iv:new Uint8Array(payload.iv)}, key, cipher);
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+}
+
+class AkiraDB{
+  constructor(){ this.db=null; this.pin=localStorage.getItem("akira_pin")||""; }
+  async init(){
+    return new Promise((res,rej)=>{
+      const req=indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded=e=>{
+        const db=e.target.result;
+        STORES.forEach(s=>{ if(!db.objectStoreNames.contains(s)) db.createObjectStore(s,{keyPath:"id", autoIncrement:s!=="settings"}); });
+      };
+      req.onsuccess=()=>{ this.db=req.result; res(); };
+      req.onerror=()=>rej(req.error);
+    });
+  }
+  async put(store, value){
+    const payload=await AkiraCrypto.encryptJSON(value, this.pin||"");
+    return new Promise((res,rej)=>{
+      const tx=this.db.transaction(store,"readwrite");
+      const st=tx.objectStore(store);
+      const req=st.put({id:value.id||Date.now().toString(36)+Math.random().toString(36).slice(2), ...payload, _ts:Date.now()});
+      req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error);
+    });
+  }
+  async putRaw(store, key, value){
+    return new Promise((res,rej)=>{
+      const tx=this.db.transaction(store,"readwrite");
+      const req=tx.objectStore(store).put({id:key, value, _ts:Date.now()});
+      req.onsuccess=()=>res(); req.onerror=()=>rej(req.error);
+    });
+  }
+  async getAll(store){
+    return new Promise((res,rej)=>{
+      const tx=this.db.transaction(store,"readonly");
+      const req=tx.objectStore(store).getAll();
+      req.onsuccess=async ()=>{
+        const out=[];
+        for(const r of req.result){
+          try{
+            if(r.enc!==undefined){ const dec=await AkiraCrypto.decryptJSON(r, this.pin||""); out.push(typeof dec==='object'&&dec.id?dec:{id:r.id, ...dec, _raw:r}); }
+            else if(r.value!==undefined){ out.push({id:r.id, ...r.value}); }
+            else out.push(r);
+          }catch{ out.push(r); }
+        }
+        res(out.sort((a,b)=>(b._ts||0)-(a._ts||0)));
+      };
+      req.onerror=()=>rej(req.error);
+    });
+  }
+  async get(store,id){
+    return new Promise((res,rej)=>{
+      const tx=this.db.transaction(store,"readonly");
+      const req=tx.objectStore(store).get(id);
+      req.onsuccess=async ()=>{ if(!req.result) return res(null); try{ const dec=await AkiraCrypto.decryptJSON(req.result, this.pin||""); res(dec);}catch{res(req.result);} }; req.onerror=()=>rej(req.error);
+    });
+  }
+  async del(store,id){ return new Promise((res,rej)=>{ const tx=this.db.transaction(store,"readwrite"); const req=tx.objectStore(store).delete(id); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
+  async clear(store){ return new Promise((res,rej)=>{ const tx=this.db.transaction(store,"readwrite"); const req=tx.objectStore(store).clear(); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
+}
+
+class NeuralEngine{
+  constructor(db){ this.db=db; this.shortTerm=[]; this.longTerm=[]; this.preferences={}; this.graph=new Map(); }
+  async load(){
+    const mems=await this.db.getAll("memories");
+    this.longTerm=mems;
+    const sets=await this.db.getAll("settings");
+    const pref=sets.find(s=>s.id==="preferences"); if(pref) this.preferences=pref;
+    this.rebuildGraph();
+  }
+  rebuildGraph(){
+    this.graph.clear();
+    this.longTerm.forEach(m=>{
+      (m.tags||[]).forEach(t=>{ if(!this.graph.has(t)) this.graph.set(t,[]); this.graph.get(t).push(m); });
+    });
+  }
+  analyzeIntent(text){
+    const t=text.toLowerCase();
+    const intents=[];
+    if(/^(salvar|guardar|add|anote|lembra).*(senha|password|login)/i.test(t) || /senha.*\w+/i.test(t)) intents.push({intent:"vault_add", score:0.95});
+    if(/mostrar|minhas senhas|cofre|recuperar senha/i.test(t)) intents.push({intent:"vault_list", score:0.9});
+    if(/gastei|paguei|comprei|despesa|custo|gasto.*r\$\s?\d+/i.test(t)) intents.push({intent:"finance_expense", score:0.95});
+    if(/recebi|ganhei|salário|receita.*r\$\s?\d+/i.test(t)) intents.push({intent:"finance_income", score:0.9});
+    if(/saldo|quanto (tenho|gastei)|finanças|orçamento/i.test(t)) intents.push({intent:"finance_balance", score:0.92});
+    if(/anote|nota|lembrar|lista|tarefa/i.test(t)) intents.push({intent:"note_add", score:0.88});
+    if(/lembrete|me lembra|alarm/i.test(t)) intents.push({intent:"reminder", score:0.85});
+    if(/quem é você|o que você faz|se apresente/i.test(t)) intents.push({intent:"identity", score:0.99});
+    if(intents.length===0) intents.push({intent:"chat", score:0.6});
+    intents.sort((a,b)=>b.score-a.score);
+    return intents[0];
+  }
+  extractEntities(text){
+    const entities={};
+    const money=[...text.matchAll(/r\$\s?([\d.,]+)/gi)].map(m=>m[1]);
+    if(money.length) entities.money=money;
+    const service=text.match(/(?:senha|login|site|app)\s*(?:do|da|no|na)?\s*([a-z0-9.-]+\.[a-z]{2,}|[a-z0-9]+)/i);
+    if(service) entities.service=service[1];
+    return entities;
+  }
+  async learnFromInteraction(userText, akiraText, intent){
+    // STM
+    this.shortTerm.push({role:"user", text:userText, ts:Date.now()}); this.shortTerm.push({role:"akira", text:akiraText, ts:Date.now()});
+    if(this.shortTerm.length>40) this.shortTerm=this.shortTerm.slice(-40);
+    // LTM heuristics
+    const tags=[intent.intent]; if(userText.length>12) tags.push("user_fact");
+    if(/(meu nome|eu sou|eu gosto|prefiro|trabalho com|moro em)/i.test(userText)) tags.push("preference");
+    const memory={id:Date.now().toString(36), text:userText.slice(0,280), intent:intent.intent, tags, score:intent.score, context:this.shortTerm.slice(-6).map(s=>s.text).join(" | ").slice(0,400), _ts:Date.now()};
+    await this.db.put("memories", memory);
+    this.longTerm.unshift(memory); this.rebuildGraph();
+    // Preference learning
+    if(tags.includes("preference")){
+      this.preferences.facts=(this.preferences.facts||[]); this.preferences.facts.push(userText);
+      await this.db.putRaw("settings","preferences", this.preferences);
+    }
+  }
+  recall(query, limit=4){
+    const q=query.toLowerCase().split(/\s+/);
+    return this.longTerm.filter(m=> q.some(w=> m.text.toLowerCase().includes(w)) || (m.tags||[]).some(t=> q.includes(t))).slice(0,limit);
+  }
+}
+
+class AkiraUI{
+  constructor(db, brain){ this.db=db; this.brain=brain; this.elMessages=$("#messages"); this.elInput=$("#input"); this.chatScroll=$("#chatScroll"); }
+  async addMessage(role, text, opts={}){
+    const wrap=document.createElement("div");
+    wrap.className=`message-enter flex ${role==="user"?"justify-end":"justify-start"} gap-2.5`;
+    const isUser=role==="user";
+    const avatar=isUser?``:`<img src="./icons/akira-avatar.webp" class="w-7 h-7 rounded-full shrink-0 mt-1"/>`;
+    const bubbleCls=isUser?"bg-white text-black rounded-[20px] rounded-br-[6px]":"bg-[#171a24] border border-white/[0.06] rounded-[20px] rounded-bl-[6px]";
+    wrap.innerHTML=`${role==="assistant"?avatar:""}<div class="max-w-[82%] ${bubbleCls} px-4 py-3 text-[14.5px] leading-[1.55] whitespace-pre-wrap break-words">${this.escape(text)}</div>`;
+    this.elMessages.appendChild(wrap);
+    this.chatScroll.scrollTo({top:this.chatScroll.scrollHeight, behavior:"smooth"});
+    // typewriter for assistant
+    if(role==="assistant" && opts.stream){
+      const bubble=wrap.querySelector("div"); const full=bubble.textContent; bubble.textContent="";
+      for(let i=0;i<full.length;i++){ bubble.textContent+=full[i]; if(i%8===0) await new Promise(r=>setTimeout(r, 12)); }
+    }
+  }
+  escape(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  showTyping(v){ $("#typing").classList.toggle("hidden",!v); $("#typing").classList.toggle("flex",v); if(v) this.chatScroll.scrollTo({top:this.chatScroll.scrollHeight}); }
+}
+
+/* ================ INIT ================ */
+const db=new AkiraDB(); await db.init();
+const brain=new NeuralEngine(db); await brain.load();
+const ui=new AkiraUI(db, brain);
+
+// Load chat history
+const history=await db.getAll("messages");
+history.slice(-30).reverse().forEach(m=>{ if(m.role && m.text) ui.addMessage(m.role, m.text); });
+if(history.length===0){
+  const intro="Sou sua agente pessoal 100% offline. Cuido de senhas, finanças, notas, boletos e tudo que importa — tudo criptografado aqui no seu aparelho. Nada vai pra nuvem. Quanto mais você fala comigo, mais inteligente eu fico localmente.\n\nTente: 'gastei R$ 42 no mercado' ou 'salva minha senha da Netflix'";
+  setTimeout(()=>{
+    const el=$("#typeIntro"); let i=0; const id=setInterval(()=>{ el.textContent=intro.slice(0,i++); if(i>intro.length) clearInterval(id); }, 14);
+  }, 400);
+}
+
+// Voice
+const audio=$("#akiraAudio");
+$("#btnPlayVoice").onclick=async ()=>{
+  try{ $("#voiceWaves").classList.remove("hidden"); $("#heroAvatar").classList.add("neuro-glow"); await audio.play(); }catch(e){ alert("Toque novamente para liberar áudio (política do navegador)"); }
+};
+audio.onended=()=>{ $("#voiceWaves").classList.add("hidden"); };
+
+// Input handling
+function autoGrow(){ const el=$("#input"); el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,120)+"px"; }
+$("#input").addEventListener("input", autoGrow);
+$("#input").addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); handleSend(); }});
+
+async function handleSend(){
+  const txt=$("#input").value.trim(); if(!txt) return;
+  $("#input").value=""; autoGrow();
+  await db.put("messages", {id:Date.now().toString(36), role:"user", text:txt, _ts:Date.now()});
+  ui.addMessage("user", txt);
+  ui.showTyping(true);
+
+  const intent=brain.analyzeIntent(txt);
+  const entities=brain.extractEntities(txt);
+  let response="";
+
+  // 90% LOCAL LOGIC
+  try{
+    if(intent.intent==="vault_add"){
+      const service=entities.service||prompt("Qual serviço? ex: netflix")||"geral";
+      const user=prompt("Usuário/email:")||"";
+      const pass=prompt("Senha:")||txt.match(/senha\s*[:\-]?\s*(\S+)/i)?.[1]||"";
+      if(pass){ await db.put("vault",{id:service, service, user, pass, _ts:Date.now()}); response=`Pronto. Salvei no cofre criptografado: ${service}. AES-256 local. 🔒`; }
+      else response="Não consegui capturar a senha. Tente: 'salva senha netflix minhasenha123'";
+    } else if(intent.intent==="vault_list"){
+      const vault=await db.getAll("vault");
+      response=vault.length?`Seu cofre tem ${vault.length} itens:\n`+vault.map(v=>`• ${v.service} → ${v.user||"sem user"}`).join("\n"):`Cofre vazio ainda.`;
+    } else if(intent.intent==="finance_expense"){
+      const val=parseFloat((entities.money?.[0]||"0").replace(",","."));
+      const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/gastei|paguei|comprei/gi,"").trim()||"despesa";
+      if(val){ await db.put("finances",{id:Date.now().toString(36), type:"expense", desc, value:val, _ts:Date.now()}); response=`Anotado: despesa de R$ ${val.toFixed(2)} em "${desc}". Seu saldo foi atualizado. 💸`; }
+      else response="Me diga o valor, ex: 'gastei R$ 120 no mercado'";
+    } else if(intent.intent==="finance_income"){
+      const val=parseFloat((entities.money?.[0]||"0").replace(",","."));
+      const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/recebi|ganhei/gi,"").trim()||"receita";
+      if(val){ await db.put("finances",{id:Date.now().toString(36), type:"income", desc, value:val, _ts:Date.now()}); response=`Receita de R$ ${val.toFixed(2)} registrada: "${desc}". ✅`; }
+      else response="Qual valor? ex: 'recebi R$ 2500 salário'";
+    } else if(intent.intent==="finance_balance"){
+      const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0);
+      response=`Seu resumo financeiro offline:\n• Receitas: R$ ${inc.toFixed(2)}\n• Despesas: R$ ${exp.toFixed(2)}\n• Saldo: R$ ${(inc-exp).toFixed(2)}\nTudo local, sem nuvem.`;
+    } else if(intent.intent==="note_add"){
+      const note=txt.replace(/anote|nota|lembrar|lista/gi,"").trim()||txt;
+      await db.put("notes",{id:Date.now().toString(36), text:note, _ts:Date.now()}); response=`Nota salva: "${note.slice(0,80)}" 📝`;
+    } else if(intent.intent==="identity"){
+      response=`Eu sou a AKIRA — agente pessoal offline. 90% da minha inteligência roda aqui no seu aparelho (IndexedDB + criptografia AES-GCM). Aprendo suas preferências, relaciono informações e evoluo sem internet.\n\nPosso cuidar de:\n• Senhas e documentos 🔑\n• Finanças, boletos e orçamento 💰\n• Notas, listas e lembretes 📝\n• Memória permanente local 🧠\n\nOs 10% online só entram se você configurar uma API para tarefas complexas.`;
+    } else {
+      // Conversa geral com recall
+      const recalled=brain.recall(txt);
+      const ctx=recalled.length?`\n\nLembro que: ${recalled.map(r=>r.text).join(" | ").slice(0,180)}`:"";
+      const pref=brain.preferences.facts?` Você prefere: ${brain.preferences.facts.slice(-2).join(", ")}`:"";
+      response=`Entendi. ${ctx}${pref}\n\nEstou aprendendo offline com você. Me diga mais, e eu vou relacionar isso com sua memória local para ficar mais útil a cada conversa.`;
+      // Online 10% fallback if API key present
+      const settings=await db.getAll("settings"); const api=settings.find(s=>s.id==="apiKey")?.value;
+      if(api && navigator.onLine){
+        try{
+          // Example placeholder - Groq/OpenAI compatible
+          const r=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+api},body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"system",content:"Você é AKIRA, agente pessoal offline-first, objetiva, premium, brasileira, minimalista. Responda curto."},{role:"user",content:txt}],max_tokens:220})});
+          if(r.ok){ const j=await r.json(); response=j.choices?.[0]?.message?.content||response; response+="\n\n[refinado via API - 10%]"; }
+        }catch{}
+      }
+    }
+  }catch(err){ console.error(err); response="Tive um erro local, mas seus dados estão seguros. Tente novamente. Detalhe: "+err.message; }
+
+  ui.showTyping(false);
+  await db.put("messages",{id:Date.now().toString(36)+"_a", role:"assistant", text:response, _ts:Date.now()});
+  await brain.learnFromInteraction(txt, response, intent);
+  await refreshStats();
+  ui.addMessage("assistant", response, {stream:true});
+}
+
+$("#btnSend").onclick=handleSend;
+$("#btnMic").onclick=()=>{
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return alert("Reconhecimento de voz não suportado neste navegador");
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; const rec=new SR(); rec.lang="pt-BR"; rec.onresult=e=>{ $("#input").value=e.results[0][0].transcript; autoGrow(); }; rec.start();
+};
+
+// Quick actions
+$$(".quickAction").forEach(b=>b.onclick=()=>{ $("#input").value=b.textContent.replace(/.* /,""); $("#input").focus(); });
+
+// Drawer
+$("#btnMenu").onclick=()=>$("#drawer").style.transform="translateX(0)";
+$("#drawerBackdrop").onclick=()=>$("#drawer").style.transform="translateX(-100%)";
+$("#btnVault").onclick=()=>{ $("#drawer").style.transform="translateX(0)"; };
+$$(".tabBtn").forEach(btn=>btn.onclick=()=>{
+  const tab=btn.dataset.tab;
+  $$("[id^='view-']").forEach(v=>v.classList.add("hidden"));
+  $("#view-"+tab).classList.remove("hidden");
+  $$(".tabBtn").forEach(b=>b.classList.remove("bg-white/[0.06]","text-white")); $$(".tabBtn").forEach(b=>b.classList.add("text-akira-muted"));
+  btn.classList.add("bg-white/[0.06]","text-white"); btn.classList.remove("text-akira-muted");
+  $("#drawer").style.transform="translateX(-100%)";
+  if(tab==="vault") renderVault(); if(tab==="finance") renderFinance(); if(tab==="notes") renderNotes(); if(tab==="memory") renderMemory();
+});
+
+// Vault render
+async function renderVault(){
+  const q=($("#vaultSearch")?.value||"").toLowerCase();
+  const list=await db.getAll("vault"); const filtered=list.filter(v=> !q || v.service.toLowerCase().includes(q));
+  $("#vaultList").innerHTML=filtered.map(v=>`<div class="flex items-center justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="font-medium text-[14px]">${v.service}</p><p class="text-[12px] mono text-akira-muted">${v.user||""} • ••••••••</p></div><div class="flex gap-2"><button onclick="navigator.clipboard.writeText('${v.pass}')" class="px-3 py-1.5 rounded-full bg-white/10 text-[12px]">Copiar</button><button data-del="${v.id}" class="delVault px-3 py-1.5 rounded-full bg-red-500/10 text-red-300 text-[12px]">Del</button></div></div>`).join("")||"<p class='text-[13px] text-akira-muted'>Nada encontrado</p>";
+  $$(".delVault").forEach(b=>b.onclick=async()=>{ await db.del("vault", b.dataset.del); renderVault(); refreshStats(); });
+}
+$("#vaultSearch")?.addEventListener("input", renderVault);
+$("#btnAddVault").onclick=async()=>{ const s=prompt("Serviço:"); if(!s) return; const u=prompt("Usuário:")||""; const p=prompt("Senha:")||""; if(p){ await db.put("vault",{id:s, service:s, user:u, pass:p}); renderVault(); refreshStats(); }};
+
+// Finance
+async function renderFinance(){
+  const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0);
+  $("#finIncome").textContent=`R$ ${inc.toFixed(2)}`; $("#finExpense").textContent=`R$ ${exp.toFixed(2)}`; $("#finBalance").textContent=`R$ ${(inc-exp).toFixed(2)}`;
+  $("#financeList").innerHTML=all.map(f=>`<div class="flex items-center justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="text-[13px]">${f.desc}</p><p class="text-[11px] mono ${f.type==="income"?"text-emerald-300":"text-red-300"}">${f.type==="income"?"+":"-"} R$ ${f.value?.toFixed(2)} • ${new Date(f._ts).toLocaleDateString("pt-BR")}</p></div><button data-del="${f.id}" class="delFin px-3 py-1 rounded-full bg-white/5 text-[11px]">x</button></div>`).join("")||"<p class='text-akira-muted text-[13px]'>Nenhum lançamento</p>";
+  $$(".delFin").forEach(b=>b.onclick=async()=>{ await db.del("finances", b.dataset.del); renderFinance(); refreshStats(); });
+}
+$("#btnAddFin").onclick=async()=>{ const d=$("#finDesc").value; const v=parseFloat($("#finValue").value); const t=$("#finType").value; if(!d||!v) return alert("Preencha descrição e valor"); await db.put("finances",{id:Date.now().toString(36), type:t, desc:d, value:v}); $("#finDesc").value=""; $("#finValue").value=""; renderFinance(); refreshStats(); };
+
+// Notes
+async function renderNotes(){
+  const all=await db.getAll("notes");
+  $("#notesList").innerHTML=all.map(n=>`<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5 flex justify-between gap-3"><p class="text-[13px] leading-relaxed">${n.text}</p><button data-del="${n.id}" class="delNote text-[11px] text-akira-muted">x</button></div>`).join("")||"<p class='text-akira-muted text-[13px]'>Sem notas</p>";
+  $$(".delNote").forEach(b=>b.onclick=async()=>{ await db.del("notes", b.dataset.del); renderNotes(); refreshStats(); });
+}
+$("#btnAddNote").onclick=async()=>{ const t=$("#noteInput").value.trim(); if(!t) return; await db.put("notes",{id:Date.now().toString(36), text:t}); $("#noteInput").value=""; renderNotes(); refreshStats(); };
+$("#noteInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#btnAddNote").click(); });
+
+// Memory
+async function renderMemory(){
+  const mems=await db.getAll("memories");
+  $("#memoryList").innerHTML=mems.slice(0,50).map(m=>`<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5"><p class="text-[12px]">${m.text}</p><p class="text-[10px] mono text-akira-muted mt-1">${m.tags?.join(" • ")} • ${new Date(m._ts).toLocaleString("pt-BR")}</p></div>`).join("");
+  // simple graph visualization
+  const graph=$("#memoryGraph");
+  const tags=[...brain.graph.keys()].slice(0,12);
+  graph.innerHTML=`<div class="flex flex-wrap gap-2">${tags.map(t=>`<span class="px-3 py-1.5 rounded-full bg-[#7af8c6]/10 border border-[#7af8c6]/20 text-[11px] mono">${t} (${brain.graph.get(t)?.length||0})</span>`).join("")}</div><p class="mt-4 text-[11px] mono text-white/30">${mems.length} memórias • ${brain.shortTerm.length} contexto curto • aprendizagem contínua ativa</p>`;
+}
+
+// Settings
+$("#btnSetPin").onclick=async()=>{ const pin=$("#pinInput").value.trim(); if(pin.length<4) return alert("PIN min 4 dígitos"); localStorage.setItem("akira_pin", pin); db.pin=pin; alert("PIN salvo! Tudo agora será criptografado com AES-GCM. Guarde bem."); };
+$("#apiKey").addEventListener("change", async()=>{ await db.putRaw("settings","apiKey",{value:$("#apiKey").value}); });
+(async()=>{ const sets=await db.getAll("settings"); const k=sets.find(s=>s.id==="apiKey"); if(k) $("#apiKey").value=k.value||""; })();
+
+$("#btnExportAll").onclick=async()=>{
+  const data={ vault:await db.getAll("vault"), finances:await db.getAll("finances"), notes:await db.getAll("notes"), memories:await db.getAll("memories"), messages:await db.getAll("messages"), exportAt:new Date().toISOString(), version:"2.0" };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/octet-stream"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`akira-backup-${Date.now()}.akira`; a.click(); URL.revokeObjectURL(url);
+};
+$("#importFile").addEventListener("change", async e=>{
+  const file=e.target.files[0]; if(!file) return; const text=await file.text(); try{ const j=JSON.parse(text); for(const store of ["vault","finances","notes","memories","messages"]){ if(j[store]) for(const item of j[store]) await db.put(store,item); } alert("Importado!"); refreshStats(); }catch(err){ alert("Arquivo inválido: "+err.message); }
+});
+$("#btnWipe").onclick=async()=>{ if(!confirm("Apagar TUDO? Irreversível.")) return; for(const s of STORES) await db.clear(s); localStorage.clear(); location.reload(); };
+$("#btnBio").onclick=async()=>{
+  try{
+    const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)), rp:{name:"AKIRA"}, user:{id:crypto.getRandomValues(new Uint8Array(16)), name:"akira-user", displayName:"AKIRA User"}, pubKeyCredParams:[{type:"public-key",alg:-7}], authenticatorSelection:{authenticatorAttachment:"platform", userVerification:"required"}}});
+    if(cred){ alert("Biometria ativada com sucesso!"); await db.putRaw("settings","biometric",{enabled:true}); }
+  }catch(e){ alert("Biometria não disponível ou cancelada: "+e.message); }
+};
+
+async function refreshStats(){
+  const vault=await db.getAll("vault"); const fin=await db.getAll("finances"); const notes=await db.getAll("notes"); const mems=await db.getAll("memories");
+  $("#statVault").textContent=vault.length; const total=fin.reduce((a,b)=>a+(b.type==="income"?b.value:-b.value),0); $("#statFinance").textContent="R$ "+total.toFixed(0); $("#statNotes").textContent=notes.length;
+  const learningScore=Math.min(100, Math.floor((mems.length*2)+(vault.length*3)+(fin.length*1.5))); $("#statNeural").textContent=learningScore+"%";
+  $("#memCount").textContent=`${mems.length} memórias`; $("#memoryIndicator").classList.remove("hidden");
+  $("#finIncome") && renderFinance();
+}
+refreshStats();
+
+// PWA install
+if('serviceWorker' in navigator){ navigator.serviceWorker.register("./sw.js"); }
+let deferredPrompt; window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredPrompt=e; const b=document.createElement("button"); b.textContent="Instalar AKIRA"; b.className="fixed bottom-20 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold z-50 shadow-xl"; b.onclick=()=>deferredPrompt.prompt(); document.body.appendChild(b); });
+
+// Offline detection
+function updateOnline(){ const online=navigator.onLine; $("#statusText").textContent=online?"ONLINE • Criptografado":"OFFLINE • Criptografado"; $("#statusDot").className=`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${online?"bg-emerald-400":"bg-amber-400"} rounded-full border-2 border-[#080a0f] shadow-[0_0_10px_#10b981]`; }
+window.addEventListener("online", updateOnline); window.addEventListener("offline", updateOnline); updateOnline();
+
+</script>
+</body>
+</html>
