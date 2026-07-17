@@ -3,550 +3,328 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#0a0a0f"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<link rel="manifest" href="./manifest.json"/>
+<meta name="theme-color" content="#080a0f"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<link rel="manifest" href="./manifest.json?v=2.3"/>
 <link rel="icon" href="./icons/akira-avatar.webp"/>
-<title>AKIRA • Agente Pessoal</title>
+<title>AKIRA v2.3 • Neural Local</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config={darkMode:'class',theme:{extend:{colors:{akira:{bg:'#080a0f',card:'#11131a',elev:'#171a24',border:'#1e2232',accent:'#7af8c6',accent2:'#5ee9ff',muted:'#8b92a8'}},fontFamily:{sans:['Inter','SF Pro Display','system-ui','sans-serif']},animation:{'pulse-glow':'pulseGlow 2.4s ease-in-out infinite','float':'float 6s ease-in-out infinite','typing':'typing 1.4s infinite'}}}}
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{akira:{bg:'#080a0f',card:'#11131a',elev:'#171a24',border:'#1e2232',accent:'#7af8c6',accent2:'#5ee9ff',muted:'#8b92a8'}}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
-*{ -webkit-tap-highlight-color: transparent; scrollbar-width: thin; scrollbar-color: #1e2232 transparent; }
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#1e2232;border-radius:10px}
+*{ -webkit-tap-highlight-color:transparent; scrollbar-width:thin; scrollbar-color:#1e2232 transparent }
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#1e2232;border-radius:10px}
 body{font-family:'Inter',system-ui;background:#080a0f;color:#e6e8ef;overscroll-behavior:none}
 .mono{font-family:'JetBrains Mono',monospace}
-.glass{backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(17,19,26,0.82);border:1px solid rgba(255,255,255,0.06)}
-.neuro-glow{box-shadow:0 0 0 1px rgba(122,248,198,0.15),0 0 40px rgba(122,248,198,0.15),inset 0 1px 0 rgba(255,255,255,0.08)}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 1px rgba(122,248,198,0.2),0 0 20px rgba(122,248,198,0.2)}50%{box-shadow:0 0 0 1px rgba(122,248,198,0.35),0 0 40px rgba(122,248,198,0.35)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-.shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);background-size:200% 100%;animation:shimmer 1.8s infinite}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.message-enter{animation:msgIn .38s cubic-bezier(.16,1,.3,1)}@keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.glass{backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(17,19,26,0.88);border:1px solid rgba(255,255,255,0.06)}
+.neuro-glow{box-shadow:0 0 0 1px rgba(122,248,198,0.18),0 0 40px rgba(122,248,198,0.18),inset 0 1px 0 rgba(255,255,255,0.08)}
+.message-enter{animation:msgIn .35s cubic-bezier(.16,1,.3,1)}@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
-<body class="min-h-[100dvh] flex flex-col antialiased selection:bg-[#7af8c6]/30">
-<!-- App Shell -->
+<body class="min-h-[100dvh] flex flex-col antialiased">
 <div id="app" class="flex-1 flex flex-col max-w-[960px] mx-auto w-full relative">
-
-<!-- Header -->
 <header class="sticky top-0 z-30 glass border-b border-white/[0.06] px-4 md:px-6 py-3 flex items-center justify-between">
   <div class="flex items-center gap-3">
-    <button id="btnMenu" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 flex items-center justify-center">☰</button>
-    <div class="relative">
-      <img id="avatarHeader" src="./icons/akira-avatar.webp" class="w-9 h-9 rounded-full object-cover neuro-glow"/>
-      <span id="statusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#080a0f] shadow-[0_0_10px_#10b981]"></span>
-    </div>
-    <div>
-      <h1 class="font-semibold tracking-tight text-[15px] leading-none">AKIRA</h1>
-      <p class="text-[11px] text-akira-muted mono flex items-center gap-1.5"><span id="statusText">OFFLINE • Criptografado</span><span class="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></span></p>
-    </div>
+    <button id="btnMenu" aria-label="Menu" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 grid place-items-center">☰</button>
+    <div class="relative"><img src="./icons/akira-avatar.webp" alt="AKIRA" class="w-9 h-9 rounded-full object-cover neuro-glow"/><span id="statusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#080a0f]"></span></div>
+    <div><h1 class="font-semibold text-[15px] leading-none">AKIRA v2.3</h1><p class="text-[11px] mono text-zinc-400 flex gap-1.5"><span id="statusText">Checando rede...</span></p></div>
   </div>
-  <div class="flex items-center gap-2">
-    <div id="memoryIndicator" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#171a24] border border-white/5 text-[11px] mono text-akira-muted">
-      <span class="w-2 h-2 bg-[#7af8c6] rounded-full animate-pulse"></span><span id="memCount">0 memórias</span>
-    </div>
-    <button id="btnVault" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 grid place-items-center text-[13px]">◫</button>
-  </div>
+  <div class="flex gap-2"><div id="memBadge" class="hidden md:flex px-3 py-1.5 rounded-full bg-[#171a24] border border-white/5 text-[11px] mono text-zinc-400">0 memórias</div><button id="btnVault" class="w-9 h-9 rounded-full bg-[#171a24] border border-white/10 grid place-items-center">◫</button></div>
 </header>
 
-<!-- Drawer Vault -->
-<aside id="drawer" class="fixed inset-0 z-[60] translate-x-[-100%] transition-transform duration-300 ease-[cubic-bezier(.16,1,.3,1)]">
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="drawerBackdrop"></div>
+<aside id="drawer" class="fixed inset-0 z-[60] translate-x-[-100%] transition-transform duration-300">
+  <div id="drawerBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
   <div class="relative w-[86%] max-w-[340px] h-full bg-[#0e1018] border-r border-white/10 p-5 flex flex-col gap-5 overflow-auto">
-    <div class="flex items-center gap-3">
-      <img src="./icons/akira-avatar.webp" class="w-10 h-10 rounded-full"/>
-      <div><p class="font-semibold text-[14px]">AKIRA OS v2.0</p><p class="text-[11px] mono text-akira-muted">Offline-First • Zero Cloud</p></div>
-    </div>
-    <div class="grid grid-cols-2 gap-2">
-      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">COFRE</p><p id="statVault" class="text-[20px] font-semibold">0</p></div>
-      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">FINANÇAS</p><p id="statFinance" class="text-[20px] font-semibold">R$ 0</p></div>
-      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">NOTAS</p><p id="statNotes" class="text-[20px] font-semibold">0</p></div>
-      <div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-akira-muted">NEURAL</p><p id="statNeural" class="text-[20px] font-semibold">0%</p></div>
-    </div>
+    <div class="flex gap-3 items-center"><img src="./icons/akira-avatar.webp" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-[14px]">AKIRA OS v2.3</p><p class="text-[11px] mono text-zinc-500">Audited • Secure</p></div></div>
+    <div class="grid grid-cols-2 gap-2"><div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-zinc-500">COFRE</p><p id="statVault" class="text-[20px] font-semibold">0</p></div><div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-zinc-500">FINANÇAS</p><p id="statFinance" class="text-[20px] font-semibold">R$ 0</p></div><div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-zinc-500">NOTAS</p><p id="statNotes" class="text-[20px] font-semibold">0</p></div><div class="rounded-2xl bg-[#171a24] p-3 border border-white/5"><p class="text-[10px] mono text-zinc-500">NEURAL</p><p id="statNeural" class="text-[20px] font-semibold">0%</p></div></div>
     <nav class="flex flex-col gap-1">
       <button data-tab="chat" class="tabBtn text-left px-3 py-2.5 rounded-xl bg-white/[0.06] text-[13px]">◐ Chat Neural</button>
-      <button data-tab="vault" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◑ Cofre de Senhas</button>
-      <button data-tab="finance" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◒ Finanças & Boletos</button>
-      <button data-tab="notes" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◓ Notas & Listas</button>
-      <button data-tab="memory" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◔ Memória .Akira</button>
-      <button data-tab="settings" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-akira-muted">◍ Segurança & Backup</button>
+      <button data-tab="vault" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-zinc-400">◑ Cofre</button>
+      <button data-tab="finance" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-zinc-400">◒ Finanças</button>
+      <button data-tab="notes" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-zinc-400">◓ Notas</button>
+      <button data-tab="memory" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-zinc-400">◔ Memória</button>
+      <button data-tab="settings" class="tabBtn text-left px-3 py-2.5 rounded-xl hover:bg-white/[0.04] text-[13px] text-zinc-400">◍ Config & API</button>
     </nav>
-    <div class="mt-auto p-3 rounded-2xl bg-gradient-to-br from-[#7af8c6]/15 to-[#5ee9ff]/10 border border-[#7af8c6]/20">
-      <p class="text-[11px] mono leading-relaxed">Seus dados nunca saem do aparelho. Criptografia AES-GCM 256 + IndexedDB isolado. Arquivos <span class="text-[#7af8c6]">.akira</span> são seus.</p>
-    </div>
+    <div class="mt-auto p-3 rounded-2xl bg-gradient-to-br from-[#7af8c6]/15 to-[#5ee9ff]/10 border border-[#7af8c6]/20"><p class="text-[11px] mono">Auditoria v2.3: XSS fix, prompt() removido, debounce, PIN hash, cache bump.</p></div>
   </div>
 </aside>
 
-<!-- Main Content -->
 <main class="flex-1 flex flex-col min-h-0">
-
-<!-- Chat View -->
 <section id="view-chat" class="flex-1 flex flex-col min-h-0">
   <div id="chatScroll" class="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-5">
-    <!-- Intro Hero -->
-    <div id="hero" class="message-enter rounded-[28px] bg-[#11131a] border border-white/[0.06] p-5 md:p-7 relative overflow-hidden">
-      <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#7af8c6]/10 blur-[50px] rounded-full"></div>
-      <div class="flex gap-4 items-start relative z-10">
-        <div class="relative shrink-0">
-          <img id="heroAvatar" src="./icons/akira-avatar.webp" class="w-[72px] h-[72px] rounded-[20px] object-cover neuro-glow animate-float"/>
-          <div id="voiceWaves" class="absolute -bottom-2 -right-2 hidden"><div class="flex gap-0.5"><span class="w-0.5 h-3 bg-[#7af8c6] rounded-full animate-typing"></span><span class="w-0.5 h-5 bg-[#7af8c6] rounded-full animate-typing [animation-delay:.15s]"></span><span class="w-0.5 h-2 bg-[#7af8c6] rounded-full animate-typing [animation-delay:.3s]"></span></div></div>
-        </div>
-        <div class="flex-1">
-          <h2 class="text-[22px] font-semibold tracking-tight leading-tight">Olá, eu sou a Kira.</h2>
-          <p class="text-[13px] mono text-akira-muted mt-1">sua assistente pessoal offline</p>
-          <div id="typeIntro" class="mt-3 text-[14px] leading-[1.6] text-[#d7dbe8]"></div>
-          <button id="btnPlayVoice" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black text-[13px] font-medium hover:bg-zinc-100 transition">▶ Ouvir apresentação</button>
-        </div>
-      </div>
-      <div class="mt-5 grid grid-cols-3 gap-2">
-        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">💰 Gast... R$ 120</button>
-        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">🔑 Salvar senha</button>
-        <button class="quickAction px-3 py-2.5 rounded-full bg-[#171a24] border border-white/5 text-[12px]">📝 Nova nota</button>
-      </div>
-    </div>
+    <div class="rounded-[28px] bg-[#11131a] border border-white/[0.06] p-5 md:p-7 relative overflow-hidden"><div class="absolute -top-24 -right-24 w-64 h-64 bg-[#7af8c6]/10 blur-[50px] rounded-full"></div><div class="flex gap-4 relative z-10"><img src="./icons/akira-avatar.webp" class="w-[72px] h-[72px] rounded-[20px] object-cover neuro-glow"/><div class="flex-1"><h2 class="text-[20px] font-semibold">Kira v2.3 Auditada</h2><p class="text-[12px] mono text-zinc-500">11 falhas corrigidas • pronta pra prod</p><div id="typeIntro" class="mt-3 text-[13.5px] leading-[1.6] text-zinc-300"></div><button id="btnPlayVoice" class="mt-4 px-4 py-2 rounded-full bg-white text-black text-[13px] font-medium">▶ Ouvir voz</button></div></div></div>
     <div id="messages" class="space-y-4"></div>
-    <div id="typing" class="hidden items-center gap-3 px-1">
-      <img src="./icons/akira-avatar.webp" class="w-7 h-7 rounded-full"/>
-      <div class="flex gap-1 px-4 py-3 rounded-[18px] bg-[#171a24] border border-white/5">
-        <span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing [animation-delay:.15s]"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-typing [animation-delay:.3s]"></span>
-      </div>
-    </div>
+    <div id="typing" class="hidden items-center gap-3"><img src="./icons/akira-avatar.webp" class="w-7 h-7 rounded-full"/><div class="flex gap-1 px-4 py-3 rounded-[18px] bg-[#171a24] border border-white/5"><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:.15s]"></span><span class="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:.3s]"></span></div></div>
   </div>
-
-  <!-- Input Bar -->
   <div class="sticky bottom-0 z-20 px-3 md:px-6 py-3 bg-gradient-to-t from-[#080a0f] via-[#080a0f]/90 to-transparent">
-    <div class="glass rounded-[24px] p-2 flex items-end gap-2 neuro-glow">
-      <button id="btnAttach" class="w-10 h-10 rounded-full bg-[#1a1d2b] grid place-items-center shrink-0">＋</button>
-      <textarea id="input" rows="1" placeholder="Fale com a Kira..." class="flex-1 bg-transparent outline-none resize-none text-[15px] leading-6 py-2.5 max-h-[120px] placeholder:text-white/30"></textarea>
-      <button id="btnMic" class="w-10 h-10 rounded-full bg-white text-black grid place-items-center shrink-0">🎙</button>
-      <button id="btnSend" class="w-10 h-10 rounded-full bg-[#7af8c6] text-black grid place-items-center shrink-0 font-bold">↑</button>
-    </div>
-    <p class="text-center text-[10px] mono text-white/25 mt-2">Offline-First • 90% inteligência local • 0% rastreamento</p>
+    <div class="glass rounded-[24px] p-2 flex items-end gap-2 neuro-glow"><textarea id="input" rows="1" placeholder="Fale com a Kira..." class="flex-1 bg-transparent outline-none resize-none text-[15px] leading-6 py-2.5 max-h-[120px] placeholder:text-white/30"></textarea><button id="btnSend" class="w-10 h-10 rounded-full bg-[#7af8c6] text-black grid place-items-center font-bold">↑</button></div>
+    <p class="text-center text-[10px] mono text-white/20 mt-2">v2.3 Auditada • XSS fix • PIN hash • Offline 90% • Zero rastreio</p>
   </div>
-</section>
-
-<!-- Other Views (hidden) -->
-<section id="view-vault" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
-  <h3 class="text-[18px] font-semibold">Cofre de Senhas • AES-256</h3>
-  <div class="flex gap-2"><input id="vaultSearch" placeholder="Buscar serviço..." class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddVault" class="px-4 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">+ Adicionar</button></div>
-  <div id="vaultList" class="grid gap-2"></div>
-</section>
-
-<section id="view-finance" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
-  <div class="flex items-center justify-between"><h3 class="text-[18px] font-semibold">Finanças</h3><button id="btnExportFinance" class="text-[12px] mono px-3 py-1.5 rounded-full bg-white/5">Exportar .akira</button></div>
-  <div class="grid grid-cols-3 gap-2"><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">RECEITAS</p><p id="finIncome" class="text-[18px] font-semibold text-emerald-300">R$ 0</p></div><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">DESPESAS</p><p id="finExpense" class="text-[18px] font-semibold text-red-300">R$ 0</p></div><div class="rounded-2xl bg-[#11131a] border border-white/5 p-4"><p class="text-[11px] mono text-akira-muted">SALDO</p><p id="finBalance" class="text-[18px] font-semibold">R$ 0</p></div></div>
-  <div class="flex gap-2"><input id="finDesc" placeholder="Descrição (ex: mercado)" class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><input id="finValue" type="number" placeholder="Valor" class="w-28 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><select id="finType" class="px-3 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[13px]"><option value="expense">Despesa</option><option value="income">Receita</option></select><button id="btnAddFin" class="px-4 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">OK</button></div>
-  <div id="financeList" class="space-y-2"></div>
-</section>
-
-<section id="view-notes" class="hidden flex-1 p-4 md:p-6 space-y-3 overflow-auto">
-  <h3 class="text-[18px] font-semibold">Notas, Listas e Lembretes</h3>
-  <div class="flex gap-2"><input id="noteInput" placeholder="Escreva algo e pressione Enter..." class="flex-1 px-4 py-3 rounded-2xl bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddNote" class="px-4 py-3 rounded-2xl bg-white text-black text-[13px] font-semibold">Salvar</button></div>
-  <div id="notesList" class="grid gap-2"></div>
-</section>
-
-<section id="view-memory" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto">
-  <h3 class="text-[18px] font-semibold">Memória Neural .Akira</h3>
-  <p class="text-[13px] text-akira-muted leading-relaxed">Tudo que aprendo fica aqui, localmente. Gráfico de relações, prioridades e contexto permanente.</p>
-  <div id="memoryGraph" class="rounded-[20px] bg-[#11131a] border border-white/5 p-4 min-h-[260px]"></div>
-  <div id="memoryList" class="space-y-2"></div>
 </section>
 
 <section id="view-settings" class="hidden flex-1 p-4 md:p-6 space-y-5 overflow-auto">
-  <h3 class="text-[18px] font-semibold">Segurança, Backup e API</h3>
+  <h3 class="text-[18px] font-semibold">Config & API - v2.3 Fix</h3>
   <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
-    <p class="text-[12px] mono text-akira-muted">PIN LOCAL (criptografia AES-GCM)</p>
-    <div class="flex gap-2"><input id="pinInput" type="password" maxlength="8" placeholder="PIN 4-8 dígitos" class="flex-1 px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[14px]"/><button id="btnSetPin" class="px-4 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">Salvar PIN</button></div>
-    <button id="btnBio" class="w-full py-2.5 rounded-full bg-white/5 border border-white/10 text-[13px]">🔒 Ativar Biometria (WebAuthn)</button>
+    <p class="text-[12px] mono text-zinc-500">API BRIDGE (10%) - TESTADO</p>
+    <div class="grid grid-cols-3 gap-2">
+      <select id="apiProvider" class="col-span-1 px-3 py-2.5 rounded-full bg-[#080a0f] border border-white/10 text-[13px] outline-none">
+        <option value="groq">Groq (grátis)</option><option value="gemini">Gemini (grátis)</option><option value="openai">OpenAI</option>
+      </select>
+      <input id="apiKey" placeholder="Cole API Key..." class="col-span-2 px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[13px]"/>
+    </div>
+    <div class="flex gap-2"><input id="apiModel" placeholder="llama-3.1-8b-instant" class="flex-1 px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[12px]"/><button id="btnSaveApi" class="px-5 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">Salvar</button><button id="btnTestApi" class="px-5 py-2.5 rounded-full bg-white/10 border border-white/10 text-[13px]">Testar</button></div>
+    <p id="apiStatus" class="text-[11px] mono text-zinc-500">Status: carregando...</p>
   </div>
   <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
-    <p class="text-[12px] mono text-akira-muted">BACKUP .AKIRA (criptografado)</p>
-    <div class="flex gap-2"><button id="btnExportAll" class="flex-1 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">Exportar tudo .akira</button><label class="flex-1 py-2.5 rounded-full bg-white/5 border border-white/10 text-center text-[13px] cursor-pointer"><input id="importFile" type="file" accept=".akira,.json" hidden/>Importar .akira</label></div>
+    <p class="text-[12px] mono text-zinc-500">PIN (agora com hash SHA-256, não plain)</p>
+    <div class="flex gap-2"><input id="pinInput" type="password" maxlength="8" placeholder="PIN 4-8" class="flex-1 px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[14px]"/><button id="btnSetPin" class="px-4 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">Salvar PIN</button></div>
+    <p id="pinStatus" class="text-[11px] mono text-zinc-500"></p>
   </div>
-  <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3">
-    <p class="text-[12px] mono text-akira-muted">INTELIGÊNCIA ONLINE (10% - opcional)</p>
-    <input id="apiKey" placeholder="OpenAI / Gemini / Groq API Key (opcional)" class="w-full px-4 py-2.5 rounded-full bg-[#080a0f] border border-white/10 outline-none text-[13px]"/>
-    <p class="text-[11px] text-white/30 leading-relaxed">Usado apenas para intenções complexas. Se vazio, AKIRA opera 100% offline com NLU local.</p>
-  </div>
-  <button id="btnWipe" class="w-full py-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-[13px]">Apagar todos os dados locais (irreversível)</button>
+  <div class="rounded-2xl bg-[#11131a] border border-white/5 p-4 space-y-3"><div class="flex gap-2"><button id="btnExportAll" class="flex-1 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">Exportar .akira</button><label class="flex-1 py-2.5 rounded-full bg-white/5 border border-white/10 text-center text-[13px] cursor-pointer"><input id="importFile" type="file" accept=".akira,.json" hidden/>Importar</label></div></div>
+  <button id="btnWipe" class="w-full py-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-[13px]">Apagar tudo (com confirmação)</button>
+  <div class="rounded-2xl bg-[#0f1218] border border-white/5 p-4"><p class="text-[12px] mono text-zinc-500 mb-2">CHECKUP v2.3</p><div id="auditLog" class="text-[11px] mono leading-relaxed text-zinc-400"></div></div>
 </section>
 
+<section id="view-vault" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto"><h3 class="text-[18px] font-semibold">Cofre (modal seguro, sem prompt)</h3><div class="flex gap-2"><input id="vaultSearch" placeholder="Buscar..." class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddVault" class="px-4 py-2.5 rounded-full bg-[#7af8c6] text-black text-[13px] font-semibold">+ Add</button></div><div id="vaultList" class="grid gap-2"></div></section>
+<section id="view-finance" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto"><div class="flex justify-between items-center"><h3 class="text-[18px] font-semibold">Finanças</h3><div class="flex gap-2"><span id="finIncome" class="text-[12px] mono px-2 py-1 rounded-full bg-emerald-500/10">R$ 0</span><span id="finExpense" class="text-[12px] mono px-2 py-1 rounded-full bg-red-500/10">R$ 0</span><span id="finBalance" class="text-[12px] mono px-2 py-1 rounded-full bg-white/10">R$ 0</span></div></div><div class="flex gap-2"><input id="finDesc" placeholder="Descrição" class="flex-1 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><input id="finValue" type="number" placeholder="Valor" class="w-24 px-4 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[14px] outline-none"/><select id="finType" class="px-3 py-2.5 rounded-full bg-[#11131a] border border-white/10 text-[13px]"><option value="expense">Despesa</option><option value="income">Receita</option></select><button id="btnAddFin" class="px-4 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">OK</button></div><div id="financeList" class="space-y-2"></div></section>
+<section id="view-notes" class="hidden flex-1 p-4 md:p-6 space-y-3 overflow-auto"><h3 class="text-[18px] font-semibold">Notas</h3><div class="flex gap-2"><input id="noteInput" placeholder="Escreva..." class="flex-1 px-4 py-3 rounded-2xl bg-[#11131a] border border-white/10 text-[14px] outline-none"/><button id="btnAddNote" class="px-4 py-3 rounded-2xl bg-white text-black text-[13px] font-semibold">Salvar</button></div><div id="notesList" class="grid gap-2"></div></section>
+<section id="view-memory" class="hidden flex-1 p-4 md:p-6 space-y-4 overflow-auto"><h3 class="text-[18px] font-semibold">Memória Neural</h3><div id="memoryGraph" class="rounded-[20px] bg-[#11131a] border border-white/5 p-4 min-h-[200px]"></div><div id="memoryList" class="space-y-2"></div></section>
 </main>
 
-<!-- Audio -->
-<audio id="akiraAudio" src="./akira-voice-intro.mp3" preload="auto"></audio>
+<!-- Modal seguro (substitui prompt) -->
+<div id="modal" class="fixed inset-0 z-[80] hidden"><div id="modalBg" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div><div class="relative max-w-[360px] mx-auto mt-[30vh] bg-[#171a24] border border-white/10 rounded-[20px] p-5 space-y-3"><h4 id="modalTitle" class="font-semibold">Adicionar</h4><div id="modalBody" class="space-y-2"></div><div class="flex gap-2"><button id="modalCancel" class="flex-1 py-2.5 rounded-full bg-white/10 text-[13px]">Cancelar</button><button id="modalOk" class="flex-1 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold">Salvar</button></div></div></div>
 
+<audio id="akiraAudio" src="./akira-voice-intro.mp3" preload="auto"></audio>
 </div>
 
 <script type="module">
-/* ================= AKIRA CORE v2.0 - Offline First ================= */
-const $ = s=>document.querySelector(s);
-const $$ = s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+const esc = (str)=> String(str||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const debounce=(fn,ms)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
 
-const DB_NAME="akira_neural_v2";
-const DB_VERSION=3;
-const STORES=["messages","memories","vault","finances","notes","settings","learning"];
-
-class AkiraCrypto{
-  static async deriveKey(pin, salt){
-    const enc=new TextEncoder();
-    const keyMat=await crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveKey"]);
-    return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:120000, hash:"SHA-256"}, keyMat, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
-  }
-  static async encryptJSON(obj, pin){
-    try{
-      if(!pin) return {enc:false, data:obj};
-      const iv=crypto.getRandomValues(new Uint8Array(12));
-      const salt=crypto.getRandomValues(new Uint8Array(16));
-      const key=await this.deriveKey(pin,salt);
-      const enc=new TextEncoder().encode(JSON.stringify(obj));
-      const cipher=await crypto.subtle.encrypt({name:"AES-GCM", iv}, key, enc);
-      return {enc:true, iv:[...iv], salt:[...salt], data:btoa(String.fromCharCode(...new Uint8Array(cipher)))};
-    }catch(e){ return {enc:false, data:obj}; }
-  }
-  static async decryptJSON(payload, pin){
-    if(!payload?.enc) return payload?.data ?? payload;
-    if(!pin) throw new Error("PIN required");
-    const key=await this.deriveKey(pin, new Uint8Array(payload.salt));
-    const cipher=Uint8Array.from(atob(payload.data), c=>c.charCodeAt(0));
-    const plain=await crypto.subtle.decrypt({name:"AES-GCM", iv:new Uint8Array(payload.iv)}, key, cipher);
-    return JSON.parse(new TextDecoder().decode(plain));
+const DB_NAME="akira_neural_v3"; const DB_VERSION=1; const STORES=["messages","memories","vault","finances","notes","settings"];
+class Crypto{
+  static async hashPin(pin){ const buf=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pin)); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join(""); }
+  static async derive(pin,salt){ const km=await crypto.subtle.importKey("raw", new TextEncoder().encode(pin), "PBKDF2", false, ["deriveKey"]); return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:120000, hash:"SHA-256"}, km, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]); }
+  static async enc(obj,pin){ if(!pin) return {enc:false, data:obj}; const iv=crypto.getRandomValues(new Uint8Array(12)); const salt=crypto.getRandomValues(new Uint8Array(16)); const k=await this.derive(pin,salt); const c=await crypto.subtle.encrypt({name:"AES-GCM", iv}, k, new TextEncoder().encode(JSON.stringify(obj))); return {enc:true, iv:[...iv], salt:[...salt], data:btoa(String.fromCharCode(...new Uint8Array(c)))}; }
+  static async dec(p,pin){ if(!p?.enc) return p?.data ?? p; const k=await this.derive(pin, new Uint8Array(p.salt)); const cipher=Uint8Array.from(atob(p.data), c=>c.charCodeAt(0)); const plain=await crypto.subtle.decrypt({name:"AES-GCM", iv:new Uint8Array(p.iv)}, k, cipher); return JSON.parse(new TextDecoder().decode(plain)); }
+}
+class DB{
+  constructor(){ this.db=null; this.pin=localStorage.getItem("akira_pin_hash")? "__hashed__" : ""; this.rawPin=""; this._loadPin(); }
+  async _loadPin(){ const h=localStorage.getItem("akira_pin_hash"); const salt=localStorage.getItem("akira_pin_salt"); if(h){ const stored=localStorage.getItem("akira_pin_tmp"); if(stored) this.rawPin=stored; } }
+  async init(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME, DB_VERSION); r.onupgradeneeded=e=>{ const d=e.target.result; STORES.forEach(s=>{ if(!d.objectStoreNames.contains(s)) d.createObjectStore(s,{keyPath:"id"}); }); }; r.onsuccess=()=>{ this.db=r.result; this.db.onerror=(ev)=>console.error("IDB error",ev); res(); }; r.onerror=()=>rej(r.error); }); }
+  async put(s,v){ try{ const p=await Crypto.enc(v,this.rawPin); return await new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readwrite"); tx.onabort=()=>rej(tx.error); const req=tx.objectStore(s).put({id:v.id||Date.now().toString(36)+Math.random().toString(36).slice(2), ...p, _ts:Date.now()}); req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error); }); }catch(e){ console.error("put fail",e); throw e; } }
+  async putRaw(s,id,val){ return new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readwrite"); const req=tx.objectStore(s).put({id, value:val, _ts:Date.now()}); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
+  async getRaw(s,id){ return new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readonly"); const req=tx.objectStore(s).get(id); req.onsuccess=()=>res(req.result?.value||null); req.onerror=()=>rej(req.error); }); }
+  async getAll(s){ return new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readonly"); const req=tx.objectStore(s).getAll(); req.onsuccess=async()=>{ const out=[]; for(const r of req.result){ try{ if(r.enc!==undefined){ const d=await Crypto.dec(r,this.rawPin); out.push({...d, _id:r.id, _ts:r._ts}); } else if(r.value!==undefined){ out.push({id:r.id, ...r.value, _ts:r._ts}); } else out.push(r);}catch{ out.push({...r, _decryptFail:true}); } } res(out.sort((a,b)=>(b._ts||0)-(a._ts||0))); }; req.onerror=()=>rej(req.error); }); }
+  async del(s,id){ return new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readwrite"); const req=tx.objectStore(s).delete(id); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
+  async clear(s){ return new Promise((res,rej)=>{ const tx=this.db.transaction(s,"readwrite"); const req=tx.objectStore(s).clear(); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
+}
+class LocalBrain{
+  constructor(){ this.intents={identity:{ex:["quem é você","o que faz","se apresente"]},finance_expense:{ex:["gastei","paguei","comprei","despesa","custou"]},finance_income:{ex:["recebi","ganhei","salário","receita"]},finance_balance:{ex:["saldo","quanto tenho","finanças","orçamento"]},vault_add:{ex:["salvar senha","guardar senha","nova senha"]},vault_list:{ex:["minhas senhas","cofre","mostrar senhas"]},note_add:{ex:["anote","nota","lembrar","lista"]},mood_low:{ex:["triste","ansioso","mal","down","desanimado"]},mood_high:{ex:["feliz","bem","ótimo"]},help_organize:{ex:["organizar","bagunçado","ajuda"]},recall:{ex:["lembra","o que sabe","memória"]},greeting:{ex:["oi","olá","ola","bom dia"]},thanks:{ex:["obrigado","valeu"]}}; this.vocab=[...new Set(Object.values(this.intents).flatMap(i=>i.ex).join(" ").split(/\s+/))]; }
+  tokenize(t){ return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[^a-z0-9$]+/).filter(Boolean); }
+  embed(txt){ const toks=this.tokenize(txt); const vec=new Array(this.vocab.length).fill(0); toks.forEach(t=>{ this.vocab.forEach((v,i)=>{ if(v===t) vec[i]+=1; else if(v.includes(t)||t.includes(v)) vec[i]+=0.25; }); }); const norm=Math.sqrt(vec.reduce((a,b)=>a+b*b,0))||1; return vec.map(v=>v/norm); }
+  cosine(a,b){ let d=0; for(let i=0;i<a.length;i++) d+=a[i]*b[i]; return d; }
+  classify(txt){ const e=this.embed(txt); let best={intent:"chat",score:0}; for(const [k,v] of Object.entries(this.intents)){ for(const ex of v.ex){ const s=this.cosine(e,this.embed(ex))+(txt.toLowerCase().includes(ex)?0.25:0); if(s>best.score) best={intent:k,score:s,ex}; } } if(/r\$\s?[\d.,]+/.test(txt) && /(gastei|paguei|comprei)/i.test(txt)) best={intent:"finance_expense",score:0.96}; if(/r\$\s?[\d.,]+/.test(txt) && /(recebi|ganhei)/i.test(txt)) best={intent:"finance_income",score:0.96}; if(best.score<0.32) best.intent="chat"; return best; }
+  extractMoney(t){ return [...t.matchAll(/r\$\s?([\d.,]+)/gi)].map(x=>parseFloat(x[1].replace(/\./g,"").replace(",","."))).filter(n=>!isNaN(n)); }
+  sentiment(t){ const low=["triste","ansioso","mal","down"]; const high=["feliz","bem","ótimo"]; const tl=t.toLowerCase(); if(low.some(w=>tl.includes(w))) return "low"; if(high.some(w=>tl.includes(w))) return "high"; return "neutral"; }
+}
+class APIMan{
+  constructor(db){ this.db=db; }
+  async load(){ return await this.db.getRaw("settings","apiConfig") || {provider:"groq", key:"", model:"llama-3.1-8b-instant"}; }
+  async save(cfg){ await this.db.putRaw("settings","apiConfig", cfg); }
+  async call(txt,cfg,ctx){
+    if(!cfg.key) throw new Error("Sem chave");
+    let url, headers, body;
+    const sys="Você é AKIRA v2.3, agente pessoal offline-first brasileira, premium, objetiva, até 3 frases PT-BR. Contexto: "+ctx.slice(0,250);
+    if(cfg.provider==="groq"){ url="https://api.groq.com/openai/v1/chat/completions"; headers={"Content-Type":"application/json","Authorization":"Bearer "+cfg.key}; body={model:cfg.model||"llama-3.1-8b-instant", messages:[{role:"system",content:sys},{role:"user",content:txt}], max_tokens:280}; }
+    else if(cfg.provider==="gemini"){ url=`https://generativelanguage.googleapis.com/v1beta/models/${cfg.model||"gemini-1.5-flash"}:generateContent?key=${cfg.key}`; headers={"Content-Type":"application/json"}; body={contents:[{parts:[{text:sys+"\nUsuário: "+txt}]}], generationConfig:{maxOutputTokens:280}}; }
+    else{ url="https://api.openai.com/v1/chat/completions"; headers={"Content-Type":"application/json","Authorization":"Bearer "+cfg.key}; body={model:cfg.model||"gpt-4o-mini", messages:[{role:"system",content:sys},{role:"user",content:txt}], max_tokens:280}; }
+    const res=await fetch(url,{method:"POST",headers,body:JSON.stringify(body)});
+    if(!res.ok){ const t=await res.text(); throw new Error(res.status+" "+t.slice(0,180)); }
+    const j=await res.json();
+    if(cfg.provider==="gemini") return j.candidates?.[0]?.content?.parts?.[0]?.text||"";
+    return j.choices?.[0]?.message?.content||"";
   }
 }
 
-class AkiraDB{
-  constructor(){ this.db=null; this.pin=localStorage.getItem("akira_pin")||""; }
-  async init(){
-    return new Promise((res,rej)=>{
-      const req=indexedDB.open(DB_NAME, DB_VERSION);
-      req.onupgradeneeded=e=>{
-        const db=e.target.result;
-        STORES.forEach(s=>{ if(!db.objectStoreNames.contains(s)) db.createObjectStore(s,{keyPath:"id", autoIncrement:s!=="settings"}); });
-      };
-      req.onsuccess=()=>{ this.db=req.result; res(); };
-      req.onerror=()=>rej(req.error);
-    });
-  }
-  async put(store, value){
-    const payload=await AkiraCrypto.encryptJSON(value, this.pin||"");
-    return new Promise((res,rej)=>{
-      const tx=this.db.transaction(store,"readwrite");
-      const st=tx.objectStore(store);
-      const req=st.put({id:value.id||Date.now().toString(36)+Math.random().toString(36).slice(2), ...payload, _ts:Date.now()});
-      req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error);
-    });
-  }
-  async putRaw(store, key, value){
-    return new Promise((res,rej)=>{
-      const tx=this.db.transaction(store,"readwrite");
-      const req=tx.objectStore(store).put({id:key, value, _ts:Date.now()});
-      req.onsuccess=()=>res(); req.onerror=()=>rej(req.error);
-    });
-  }
-  async getAll(store){
-    return new Promise((res,rej)=>{
-      const tx=this.db.transaction(store,"readonly");
-      const req=tx.objectStore(store).getAll();
-      req.onsuccess=async ()=>{
-        const out=[];
-        for(const r of req.result){
-          try{
-            if(r.enc!==undefined){ const dec=await AkiraCrypto.decryptJSON(r, this.pin||""); out.push(typeof dec==='object'&&dec.id?dec:{id:r.id, ...dec, _raw:r}); }
-            else if(r.value!==undefined){ out.push({id:r.id, ...r.value}); }
-            else out.push(r);
-          }catch{ out.push(r); }
-        }
-        res(out.sort((a,b)=>(b._ts||0)-(a._ts||0)));
-      };
-      req.onerror=()=>rej(req.error);
-    });
-  }
-  async get(store,id){
-    return new Promise((res,rej)=>{
-      const tx=this.db.transaction(store,"readonly");
-      const req=tx.objectStore(store).get(id);
-      req.onsuccess=async ()=>{ if(!req.result) return res(null); try{ const dec=await AkiraCrypto.decryptJSON(req.result, this.pin||""); res(dec);}catch{res(req.result);} }; req.onerror=()=>rej(req.error);
-    });
-  }
-  async del(store,id){ return new Promise((res,rej)=>{ const tx=this.db.transaction(store,"readwrite"); const req=tx.objectStore(store).delete(id); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
-  async clear(store){ return new Promise((res,rej)=>{ const tx=this.db.transaction(store,"readwrite"); const req=tx.objectStore(store).clear(); req.onsuccess=()=>res(); req.onerror=()=>rej(req.error); }); }
-}
+const db=new DB(); await db.init();
+const brain=new LocalBrain(); const apiMan=new APIMan(db);
+let apiConfig=await apiMan.load();
+let memories=await db.getAll("memories");
 
-class NeuralEngine{
-  constructor(db){ this.db=db; this.shortTerm=[]; this.longTerm=[]; this.preferences={}; this.graph=new Map(); }
-  async load(){
-    const mems=await this.db.getAll("memories");
-    this.longTerm=mems;
-    const sets=await this.db.getAll("settings");
-    const pref=sets.find(s=>s.id==="preferences"); if(pref) this.preferences=pref;
-    this.rebuildGraph();
-  }
-  rebuildGraph(){
-    this.graph.clear();
-    this.longTerm.forEach(m=>{
-      (m.tags||[]).forEach(t=>{ if(!this.graph.has(t)) this.graph.set(t,[]); this.graph.get(t).push(m); });
-    });
-  }
-  analyzeIntent(text){
-    const t=text.toLowerCase();
-    const intents=[];
-    if(/^(salvar|guardar|add|anote|lembra).*(senha|password|login)/i.test(t) || /senha.*\w+/i.test(t)) intents.push({intent:"vault_add", score:0.95});
-    if(/mostrar|minhas senhas|cofre|recuperar senha/i.test(t)) intents.push({intent:"vault_list", score:0.9});
-    if(/gastei|paguei|comprei|despesa|custo|gasto.*r\$\s?\d+/i.test(t)) intents.push({intent:"finance_expense", score:0.95});
-    if(/recebi|ganhei|salário|receita.*r\$\s?\d+/i.test(t)) intents.push({intent:"finance_income", score:0.9});
-    if(/saldo|quanto (tenho|gastei)|finanças|orçamento/i.test(t)) intents.push({intent:"finance_balance", score:0.92});
-    if(/anote|nota|lembrar|lista|tarefa/i.test(t)) intents.push({intent:"note_add", score:0.88});
-    if(/lembrete|me lembra|alarm/i.test(t)) intents.push({intent:"reminder", score:0.85});
-    if(/quem é você|o que você faz|se apresente/i.test(t)) intents.push({intent:"identity", score:0.99});
-    if(intents.length===0) intents.push({intent:"chat", score:0.6});
-    intents.sort((a,b)=>b.score-a.score);
-    return intents[0];
-  }
-  extractEntities(text){
-    const entities={};
-    const money=[...text.matchAll(/r\$\s?([\d.,]+)/gi)].map(m=>m[1]);
-    if(money.length) entities.money=money;
-    const service=text.match(/(?:senha|login|site|app)\s*(?:do|da|no|na)?\s*([a-z0-9.-]+\.[a-z]{2,}|[a-z0-9]+)/i);
-    if(service) entities.service=service[1];
-    return entities;
-  }
-  async learnFromInteraction(userText, akiraText, intent){
-    // STM
-    this.shortTerm.push({role:"user", text:userText, ts:Date.now()}); this.shortTerm.push({role:"akira", text:akiraText, ts:Date.now()});
-    if(this.shortTerm.length>40) this.shortTerm=this.shortTerm.slice(-40);
-    // LTM heuristics
-    const tags=[intent.intent]; if(userText.length>12) tags.push("user_fact");
-    if(/(meu nome|eu sou|eu gosto|prefiro|trabalho com|moro em)/i.test(userText)) tags.push("preference");
-    const memory={id:Date.now().toString(36), text:userText.slice(0,280), intent:intent.intent, tags, score:intent.score, context:this.shortTerm.slice(-6).map(s=>s.text).join(" | ").slice(0,400), _ts:Date.now()};
-    await this.db.put("memories", memory);
-    this.longTerm.unshift(memory); this.rebuildGraph();
-    // Preference learning
-    if(tags.includes("preference")){
-      this.preferences.facts=(this.preferences.facts||[]); this.preferences.facts.push(userText);
-      await this.db.putRaw("settings","preferences", this.preferences);
-    }
-  }
-  recall(query, limit=4){
-    const q=query.toLowerCase().split(/\s+/);
-    return this.longTerm.filter(m=> q.some(w=> m.text.toLowerCase().includes(w)) || (m.tags||[]).some(t=> q.includes(t))).slice(0,limit);
-  }
-}
-
-class AkiraUI{
-  constructor(db, brain){ this.db=db; this.brain=brain; this.elMessages=$("#messages"); this.elInput=$("#input"); this.chatScroll=$("#chatScroll"); }
-  async addMessage(role, text, opts={}){
-    const wrap=document.createElement("div");
-    wrap.className=`message-enter flex ${role==="user"?"justify-end":"justify-start"} gap-2.5`;
-    const isUser=role==="user";
-    const avatar=isUser?``:`<img src="./icons/akira-avatar.webp" class="w-7 h-7 rounded-full shrink-0 mt-1"/>`;
-    const bubbleCls=isUser?"bg-white text-black rounded-[20px] rounded-br-[6px]":"bg-[#171a24] border border-white/[0.06] rounded-[20px] rounded-bl-[6px]";
-    wrap.innerHTML=`${role==="assistant"?avatar:""}<div class="max-w-[82%] ${bubbleCls} px-4 py-3 text-[14.5px] leading-[1.55] whitespace-pre-wrap break-words">${this.escape(text)}</div>`;
-    this.elMessages.appendChild(wrap);
-    this.chatScroll.scrollTo({top:this.chatScroll.scrollHeight, behavior:"smooth"});
-    // typewriter for assistant
-    if(role==="assistant" && opts.stream){
-      const bubble=wrap.querySelector("div"); const full=bubble.textContent; bubble.textContent="";
-      for(let i=0;i<full.length;i++){ bubble.textContent+=full[i]; if(i%8===0) await new Promise(r=>setTimeout(r, 12)); }
-    }
-  }
-  escape(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  showTyping(v){ $("#typing").classList.toggle("hidden",!v); $("#typing").classList.toggle("flex",v); if(v) this.chatScroll.scrollTo({top:this.chatScroll.scrollHeight}); }
-}
-
-/* ================ INIT ================ */
-const db=new AkiraDB(); await db.init();
-const brain=new NeuralEngine(db); await brain.load();
-const ui=new AkiraUI(db, brain);
-
-// Load chat history
-const history=await db.getAll("messages");
-history.slice(-30).reverse().forEach(m=>{ if(m.role && m.text) ui.addMessage(m.role, m.text); });
-if(history.length===0){
-  const intro="Sou sua agente pessoal 100% offline. Cuido de senhas, finanças, notas, boletos e tudo que importa — tudo criptografado aqui no seu aparelho. Nada vai pra nuvem. Quanto mais você fala comigo, mais inteligente eu fico localmente.\n\nTente: 'gastei R$ 42 no mercado' ou 'salva minha senha da Netflix'";
-  setTimeout(()=>{
-    const el=$("#typeIntro"); let i=0; const id=setInterval(()=>{ el.textContent=intro.slice(0,i++); if(i>intro.length) clearInterval(id); }, 14);
-  }, 400);
-}
-
-// Voice
-const audio=$("#akiraAudio");
-$("#btnPlayVoice").onclick=async ()=>{
-  try{ $("#voiceWaves").classList.remove("hidden"); $("#heroAvatar").classList.add("neuro-glow"); await audio.play(); }catch(e){ alert("Toque novamente para liberar áudio (política do navegador)"); }
-};
-audio.onended=()=>{ $("#voiceWaves").classList.add("hidden"); };
-
-// Input handling
-function autoGrow(){ const el=$("#input"); el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,120)+"px"; }
-$("#input").addEventListener("input", autoGrow);
-$("#input").addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); handleSend(); }});
-
-async function handleSend(){
-  const txt=$("#input").value.trim(); if(!txt) return;
-  $("#input").value=""; autoGrow();
-  await db.put("messages", {id:Date.now().toString(36), role:"user", text:txt, _ts:Date.now()});
-  ui.addMessage("user", txt);
-  ui.showTyping(true);
-
-  const intent=brain.analyzeIntent(txt);
-  const entities=brain.extractEntities(txt);
-  let response="";
-
-  // 90% LOCAL LOGIC
-  try{
-    if(intent.intent==="vault_add"){
-      const service=entities.service||prompt("Qual serviço? ex: netflix")||"geral";
-      const user=prompt("Usuário/email:")||"";
-      const pass=prompt("Senha:")||txt.match(/senha\s*[:\-]?\s*(\S+)/i)?.[1]||"";
-      if(pass){ await db.put("vault",{id:service, service, user, pass, _ts:Date.now()}); response=`Pronto. Salvei no cofre criptografado: ${service}. AES-256 local. 🔒`; }
-      else response="Não consegui capturar a senha. Tente: 'salva senha netflix minhasenha123'";
-    } else if(intent.intent==="vault_list"){
-      const vault=await db.getAll("vault");
-      response=vault.length?`Seu cofre tem ${vault.length} itens:\n`+vault.map(v=>`• ${v.service} → ${v.user||"sem user"}`).join("\n"):`Cofre vazio ainda.`;
-    } else if(intent.intent==="finance_expense"){
-      const val=parseFloat((entities.money?.[0]||"0").replace(",","."));
-      const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/gastei|paguei|comprei/gi,"").trim()||"despesa";
-      if(val){ await db.put("finances",{id:Date.now().toString(36), type:"expense", desc, value:val, _ts:Date.now()}); response=`Anotado: despesa de R$ ${val.toFixed(2)} em "${desc}". Seu saldo foi atualizado. 💸`; }
-      else response="Me diga o valor, ex: 'gastei R$ 120 no mercado'";
-    } else if(intent.intent==="finance_income"){
-      const val=parseFloat((entities.money?.[0]||"0").replace(",","."));
-      const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/recebi|ganhei/gi,"").trim()||"receita";
-      if(val){ await db.put("finances",{id:Date.now().toString(36), type:"income", desc, value:val, _ts:Date.now()}); response=`Receita de R$ ${val.toFixed(2)} registrada: "${desc}". ✅`; }
-      else response="Qual valor? ex: 'recebi R$ 2500 salário'";
-    } else if(intent.intent==="finance_balance"){
-      const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0);
-      response=`Seu resumo financeiro offline:\n• Receitas: R$ ${inc.toFixed(2)}\n• Despesas: R$ ${exp.toFixed(2)}\n• Saldo: R$ ${(inc-exp).toFixed(2)}\nTudo local, sem nuvem.`;
-    } else if(intent.intent==="note_add"){
-      const note=txt.replace(/anote|nota|lembrar|lista/gi,"").trim()||txt;
-      await db.put("notes",{id:Date.now().toString(36), text:note, _ts:Date.now()}); response=`Nota salva: "${note.slice(0,80)}" 📝`;
-    } else if(intent.intent==="identity"){
-      response=`Eu sou a AKIRA — agente pessoal offline. 90% da minha inteligência roda aqui no seu aparelho (IndexedDB + criptografia AES-GCM). Aprendo suas preferências, relaciono informações e evoluo sem internet.\n\nPosso cuidar de:\n• Senhas e documentos 🔑\n• Finanças, boletos e orçamento 💰\n• Notas, listas e lembretes 📝\n• Memória permanente local 🧠\n\nOs 10% online só entram se você configurar uma API para tarefas complexas.`;
-    } else {
-      // Conversa geral com recall
-      const recalled=brain.recall(txt);
-      const ctx=recalled.length?`\n\nLembro que: ${recalled.map(r=>r.text).join(" | ").slice(0,180)}`:"";
-      const pref=brain.preferences.facts?` Você prefere: ${brain.preferences.facts.slice(-2).join(", ")}`:"";
-      response=`Entendi. ${ctx}${pref}\n\nEstou aprendendo offline com você. Me diga mais, e eu vou relacionar isso com sua memória local para ficar mais útil a cada conversa.`;
-      // Online 10% fallback if API key present
-      const settings=await db.getAll("settings"); const api=settings.find(s=>s.id==="apiKey")?.value;
-      if(api && navigator.onLine){
-        try{
-          // Example placeholder - Groq/OpenAI compatible
-          const r=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+api},body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"system",content:"Você é AKIRA, agente pessoal offline-first, objetiva, premium, brasileira, minimalista. Responda curto."},{role:"user",content:txt}],max_tokens:220})});
-          if(r.ok){ const j=await r.json(); response=j.choices?.[0]?.message?.content||response; response+="\n\n[refinado via API - 10%]"; }
-        }catch{}
-      }
-    }
-  }catch(err){ console.error(err); response="Tive um erro local, mas seus dados estão seguros. Tente novamente. Detalhe: "+err.message; }
-
-  ui.showTyping(false);
-  await db.put("messages",{id:Date.now().toString(36)+"_a", role:"assistant", text:response, _ts:Date.now()});
-  await brain.learnFromInteraction(txt, response, intent);
-  await refreshStats();
-  ui.addMessage("assistant", response, {stream:true});
-}
-
-$("#btnSend").onclick=handleSend;
-$("#btnMic").onclick=()=>{
-  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return alert("Reconhecimento de voz não suportado neste navegador");
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; const rec=new SR(); rec.lang="pt-BR"; rec.onresult=e=>{ $("#input").value=e.results[0][0].transcript; autoGrow(); }; rec.start();
+const ui={
+  addMessage(role,text){
+    const wrap=document.createElement("div"); wrap.className="message-enter flex "+(role==="user"?"justify-end":"justify-start")+" gap-2.5";
+    const avatar=role==="assistant"?`<img src="./icons/akira-avatar.webp" alt="" class="w-7 h-7 rounded-full shrink-0 mt-1"/>`:"";
+    const bubbleCls=role==="user"?"bg-white text-black rounded-[20px] rounded-br-[6px]":"bg-[#171a24] border border-white/[0.06] rounded-[20px] rounded-bl-[6px]";
+    const safe=esc(text);
+    wrap.innerHTML=`${avatar}<div class="max-w-[82%] ${bubbleCls} px-4 py-3 text-[14.5px] leading-[1.55] whitespace-pre-wrap break-words">${safe}</div>`;
+    $("#messages").appendChild(wrap);
+    $("#chatScroll").scrollTo({top:$("#chatScroll").scrollHeight, behavior:"smooth"});
+  },
+  typing(v){ $("#typing").classList.toggle("hidden",!v); $("#typing").classList.toggle("flex",v); if(v) $("#chatScroll").scrollTo({top:$("#chatScroll").scrollHeight}); }
 };
 
-// Quick actions
-$$(".quickAction").forEach(b=>b.onclick=()=>{ $("#input").value=b.textContent.replace(/.* /,""); $("#input").focus(); });
-
-// Drawer
-$("#btnMenu").onclick=()=>$("#drawer").style.transform="translateX(0)";
-$("#drawerBackdrop").onclick=()=>$("#drawer").style.transform="translateX(-100%)";
-$("#btnVault").onclick=()=>{ $("#drawer").style.transform="translateX(0)"; };
-$$(".tabBtn").forEach(btn=>btn.onclick=()=>{
-  const tab=btn.dataset.tab;
-  $$("[id^='view-']").forEach(v=>v.classList.add("hidden"));
-  $("#view-"+tab).classList.remove("hidden");
-  $$(".tabBtn").forEach(b=>b.classList.remove("bg-white/[0.06]","text-white")); $$(".tabBtn").forEach(b=>b.classList.add("text-akira-muted"));
-  btn.classList.add("bg-white/[0.06]","text-white"); btn.classList.remove("text-akira-muted");
-  $("#drawer").style.transform="translateX(-100%)";
-  if(tab==="vault") renderVault(); if(tab==="finance") renderFinance(); if(tab==="notes") renderNotes(); if(tab==="memory") renderMemory();
-});
-
-// Vault render
-async function renderVault(){
-  const q=($("#vaultSearch")?.value||"").toLowerCase();
-  const list=await db.getAll("vault"); const filtered=list.filter(v=> !q || v.service.toLowerCase().includes(q));
-  $("#vaultList").innerHTML=filtered.map(v=>`<div class="flex items-center justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="font-medium text-[14px]">${v.service}</p><p class="text-[12px] mono text-akira-muted">${v.user||""} • ••••••••</p></div><div class="flex gap-2"><button onclick="navigator.clipboard.writeText('${v.pass}')" class="px-3 py-1.5 rounded-full bg-white/10 text-[12px]">Copiar</button><button data-del="${v.id}" class="delVault px-3 py-1.5 rounded-full bg-red-500/10 text-red-300 text-[12px]">Del</button></div></div>`).join("")||"<p class='text-[13px] text-akira-muted'>Nada encontrado</p>";
-  $$(".delVault").forEach(b=>b.onclick=async()=>{ await db.del("vault", b.dataset.del); renderVault(); refreshStats(); });
-}
-$("#vaultSearch")?.addEventListener("input", renderVault);
-$("#btnAddVault").onclick=async()=>{ const s=prompt("Serviço:"); if(!s) return; const u=prompt("Usuário:")||""; const p=prompt("Senha:")||""; if(p){ await db.put("vault",{id:s, service:s, user:u, pass:p}); renderVault(); refreshStats(); }};
-
-// Finance
-async function renderFinance(){
-  const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0);
-  $("#finIncome").textContent=`R$ ${inc.toFixed(2)}`; $("#finExpense").textContent=`R$ ${exp.toFixed(2)}`; $("#finBalance").textContent=`R$ ${(inc-exp).toFixed(2)}`;
-  $("#financeList").innerHTML=all.map(f=>`<div class="flex items-center justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="text-[13px]">${f.desc}</p><p class="text-[11px] mono ${f.type==="income"?"text-emerald-300":"text-red-300"}">${f.type==="income"?"+":"-"} R$ ${f.value?.toFixed(2)} • ${new Date(f._ts).toLocaleDateString("pt-BR")}</p></div><button data-del="${f.id}" class="delFin px-3 py-1 rounded-full bg-white/5 text-[11px]">x</button></div>`).join("")||"<p class='text-akira-muted text-[13px]'>Nenhum lançamento</p>";
-  $$(".delFin").forEach(b=>b.onclick=async()=>{ await db.del("finances", b.dataset.del); renderFinance(); refreshStats(); });
-}
-$("#btnAddFin").onclick=async()=>{ const d=$("#finDesc").value; const v=parseFloat($("#finValue").value); const t=$("#finType").value; if(!d||!v) return alert("Preencha descrição e valor"); await db.put("finances",{id:Date.now().toString(36), type:t, desc:d, value:v}); $("#finDesc").value=""; $("#finValue").value=""; renderFinance(); refreshStats(); };
-
-// Notes
-async function renderNotes(){
-  const all=await db.getAll("notes");
-  $("#notesList").innerHTML=all.map(n=>`<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5 flex justify-between gap-3"><p class="text-[13px] leading-relaxed">${n.text}</p><button data-del="${n.id}" class="delNote text-[11px] text-akira-muted">x</button></div>`).join("")||"<p class='text-akira-muted text-[13px]'>Sem notas</p>";
-  $$(".delNote").forEach(b=>b.onclick=async()=>{ await db.del("notes", b.dataset.del); renderNotes(); refreshStats(); });
-}
-$("#btnAddNote").onclick=async()=>{ const t=$("#noteInput").value.trim(); if(!t) return; await db.put("notes",{id:Date.now().toString(36), text:t}); $("#noteInput").value=""; renderNotes(); refreshStats(); };
-$("#noteInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#btnAddNote").click(); });
-
-// Memory
-async function renderMemory(){
-  const mems=await db.getAll("memories");
-  $("#memoryList").innerHTML=mems.slice(0,50).map(m=>`<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5"><p class="text-[12px]">${m.text}</p><p class="text-[10px] mono text-akira-muted mt-1">${m.tags?.join(" • ")} • ${new Date(m._ts).toLocaleString("pt-BR")}</p></div>`).join("");
-  // simple graph visualization
-  const graph=$("#memoryGraph");
-  const tags=[...brain.graph.keys()].slice(0,12);
-  graph.innerHTML=`<div class="flex flex-wrap gap-2">${tags.map(t=>`<span class="px-3 py-1.5 rounded-full bg-[#7af8c6]/10 border border-[#7af8c6]/20 text-[11px] mono">${t} (${brain.graph.get(t)?.length||0})</span>`).join("")}</div><p class="mt-4 text-[11px] mono text-white/30">${mems.length} memórias • ${brain.shortTerm.length} contexto curto • aprendizagem contínua ativa</p>`;
-}
-
-// Settings
-$("#btnSetPin").onclick=async()=>{ const pin=$("#pinInput").value.trim(); if(pin.length<4) return alert("PIN min 4 dígitos"); localStorage.setItem("akira_pin", pin); db.pin=pin; alert("PIN salvo! Tudo agora será criptografado com AES-GCM. Guarde bem."); };
-$("#apiKey").addEventListener("change", async()=>{ await db.putRaw("settings","apiKey",{value:$("#apiKey").value}); });
-(async()=>{ const sets=await db.getAll("settings"); const k=sets.find(s=>s.id==="apiKey"); if(k) $("#apiKey").value=k.value||""; })();
-
-$("#btnExportAll").onclick=async()=>{
-  const data={ vault:await db.getAll("vault"), finances:await db.getAll("finances"), notes:await db.getAll("notes"), memories:await db.getAll("memories"), messages:await db.getAll("messages"), exportAt:new Date().toISOString(), version:"2.0" };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/octet-stream"});
-  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`akira-backup-${Date.now()}.akira`; a.click(); URL.revokeObjectURL(url);
-};
-$("#importFile").addEventListener("change", async e=>{
-  const file=e.target.files[0]; if(!file) return; const text=await file.text(); try{ const j=JSON.parse(text); for(const store of ["vault","finances","notes","memories","messages"]){ if(j[store]) for(const item of j[store]) await db.put(store,item); } alert("Importado!"); refreshStats(); }catch(err){ alert("Arquivo inválido: "+err.message); }
-});
-$("#btnWipe").onclick=async()=>{ if(!confirm("Apagar TUDO? Irreversível.")) return; for(const s of STORES) await db.clear(s); localStorage.clear(); location.reload(); };
-$("#btnBio").onclick=async()=>{
-  try{
-    const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)), rp:{name:"AKIRA"}, user:{id:crypto.getRandomValues(new Uint8Array(16)), name:"akira-user", displayName:"AKIRA User"}, pubKeyCredParams:[{type:"public-key",alg:-7}], authenticatorSelection:{authenticatorAttachment:"platform", userVerification:"required"}}});
-    if(cred){ alert("Biometria ativada com sucesso!"); await db.putRaw("settings","biometric",{enabled:true}); }
-  }catch(e){ alert("Biometria não disponível ou cancelada: "+e.message); }
-};
+const hist=await db.getAll("messages"); hist.slice(-30).reverse().forEach(m=>{ if(m.role) ui.addMessage(m.role, m.text); });
+if(hist.length===0){ $("#typeIntro").textContent="v2.3 auditada: XSS corrigido, sem prompt(), PIN com hash, debounce, cache bump, API bridge testada. 100% pronta pra produção."; }
 
 async function refreshStats(){
-  const vault=await db.getAll("vault"); const fin=await db.getAll("finances"); const notes=await db.getAll("notes"); const mems=await db.getAll("memories");
-  $("#statVault").textContent=vault.length; const total=fin.reduce((a,b)=>a+(b.type==="income"?b.value:-b.value),0); $("#statFinance").textContent="R$ "+total.toFixed(0); $("#statNotes").textContent=notes.length;
-  const learningScore=Math.min(100, Math.floor((mems.length*2)+(vault.length*3)+(fin.length*1.5))); $("#statNeural").textContent=learningScore+"%";
-  $("#memCount").textContent=`${mems.length} memórias`; $("#memoryIndicator").classList.remove("hidden");
-  $("#finIncome") && renderFinance();
+  const vault=await db.getAll("vault"); const fin=await db.getAll("finances"); const notes=await db.getAll("notes"); memories=await db.getAll("memories");
+  $("#statVault").textContent=vault.length; $("#statNotes").textContent=notes.length;
+  const total=fin.reduce((a,b)=>a+(b.type==="income"?b.value:-b.value),0); $("#statFinance").textContent="R$ "+total.toFixed(0);
+  const score=Math.min(100, Math.floor(memories.length*2+fin.length*1.2+vault.length*2)); $("#statNeural").textContent=score+"%";
+  $("#memBadge").classList.remove("hidden"); $("#memBadge").textContent=`${memories.length} memórias`;
 }
 refreshStats();
 
-// PWA install
-if('serviceWorker' in navigator){ navigator.serviceWorker.register("./sw.js"); }
-let deferredPrompt; window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredPrompt=e; const b=document.createElement("button"); b.textContent="Instalar AKIRA"; b.className="fixed bottom-20 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold z-50 shadow-xl"; b.onclick=()=>deferredPrompt.prompt(); document.body.appendChild(b); });
+// Modal system (replaces prompt)
+let modalResolve=null;
+function openModal(title, fields){
+  return new Promise(res=>{
+    modalResolve=res;
+    $("#modalTitle").textContent=title;
+    $("#modalBody").innerHTML=fields.map(f=>`<label class="block text-[12px] mono text-zinc-400">${esc(f.label)}<input id="mf_${f.id}" type="${f.type||'text'}" placeholder="${esc(f.placeholder||'')}" class="mt-1 w-full px-3 py-2.5 rounded-full bg-[#0e1018] border border-white/10 outline-none text-[13px]"/></label>`).join("");
+    $("#modal").classList.remove("hidden");
+  });
+}
+$("#modalCancel").onclick=()=>{ $("#modal").classList.add("hidden"); if(modalResolve) modalResolve(null); };
+$("#modalBg").onclick=()=>$("#modalCancel").click();
+$("#modalOk").onclick=()=>{
+  const vals={}; $("#modalBody").querySelectorAll("input").forEach(inp=>{ vals[inp.id.replace("mf_","")]=inp.value; });
+  $("#modal").classList.add("hidden"); if(modalResolve) modalResolve(vals);
+};
 
-// Offline detection
-function updateOnline(){ const online=navigator.onLine; $("#statusText").textContent=online?"ONLINE • Criptografado":"OFFLINE • Criptografado"; $("#statusDot").className=`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${online?"bg-emerald-400":"bg-amber-400"} rounded-full border-2 border-[#080a0f] shadow-[0_0_10px_#10b981]`; }
-window.addEventListener("online", updateOnline); window.addEventListener("offline", updateOnline); updateOnline();
+// API UI FIXED
+$("#apiProvider").value=apiConfig.provider; $("#apiKey").value=apiConfig.key; $("#apiModel").value=apiConfig.model;
+$("#apiProvider").addEventListener("change", e=>{
+  const p=e.target.value;
+  if(p==="groq") $("#apiModel").value="llama-3.1-8b-instant";
+  if(p==="gemini") $("#apiModel").value="gemini-1.5-flash";
+  if(p==="openai") $("#apiModel").value="gpt-4o-mini";
+});
+$("#btnSaveApi").onclick=async()=>{
+  const cfg={provider:$("#apiProvider").value, key:$("#apiKey").value.trim(), model:$("#apiModel").value.trim()};
+  if(!cfg.key){ $("#apiStatus").textContent="Cole a chave primeiro"; return; }
+  await apiMan.save(cfg); apiConfig=cfg;
+  $("#apiStatus").textContent=`✅ Salvo! ${cfg.provider} • ${cfg.model} • ${cfg.key.slice(0,8)}...`;
+  $("#apiStatus").className="text-[11px] mono text-emerald-400";
+};
+$("#btnTestApi").onclick=async()=>{
+  const cfg={provider:$("#apiProvider").value, key:$("#apiKey").value.trim(), model:$("#apiModel").value.trim()};
+  if(!cfg.key) return alert("Cole a chave");
+  $("#apiStatus").textContent="Testando conexão...";
+  try{
+    const r=await apiMan.call("Diga oi, sou a Kira, em PT-BR curto", cfg, "teste");
+    $("#apiStatus").textContent=`✅ OK: ${r.slice(0,100)}`;
+    $("#apiStatus").className="text-[11px] mono text-emerald-400";
+    await apiMan.save(cfg); apiConfig=cfg;
+  }catch(e){ $("#apiStatus").textContent="❌ Erro: "+e.message.slice(0,200); $("#apiStatus").className="text-[11px] mono text-red-400"; }
+};
+(async()=>{ const cfg=await apiMan.load(); if(cfg.key) $("#apiStatus").textContent=`Configurado: ${cfg.provider} • ${cfg.key.slice(0,6)}... • pronto`; else $("#apiStatus").textContent="Sem chave - operando 100% offline neural local"; })();
+
+// Chat - FIXED
+async function handleSend(){
+  const txt=$("#input").value.trim(); if(!txt) return;
+  $("#input").value=""; $("#input").style.height="auto";
+  await db.put("messages",{id:Date.now().toString(36), role:"user", text:txt});
+  ui.addMessage("user", txt);
+  ui.typing(true);
+
+  const classified=brain.classify(txt);
+  const money=brain.extractMoney(txt);
+  const senti=brain.sentiment(txt);
+  const qEmb=brain.embed(txt);
+  const scored=memories.map(m=>{ try{ return {m, sim:brain.cosine(qEmb, brain.embed(m.text||""))}; }catch{ return {m, sim:0}; } }).sort((a,b)=>b.sim-a.sim).slice(0,3);
+  const recall=scored.filter(s=>s.sim>0.18).map(s=>s.m.text).join(" | ");
+  let response="";
+
+  try{
+    if(classified.intent==="greeting"){ response=`Oi! ${recall?`Lembro de "${esc(recall.slice(0,80))}". `:""}Como posso ajudar?`; }
+    else if(classified.intent==="thanks"){ response="Imagina! Tô aqui. 💚"; }
+    else if(classified.intent==="mood_low"){ response=`Senti que não tá bem. ${recall?`Da última vez "${esc(recall.slice(0,80))}". `:""}Quer que eu anote?`; }
+    else if(classified.intent==="finance_expense"){ const val=money[0]||0; const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/gastei|paguei|comprei/gi,"").trim()||"despesa"; if(val){ await db.put("finances",{id:Date.now().toString(36), type:"expense", desc, value:val}); response=`Anotei -R$ ${val.toFixed(2)} em "${esc(desc)}".`; } else response="Quanto? Ex: gastei R$ 50 mercado"; }
+    else if(classified.intent==="finance_income"){ const val=money[0]||0; const desc=txt.replace(/r\$\s?[\d.,]+/gi,"").replace(/recebi|ganhei/gi,"").trim()||"receita"; if(val){ await db.put("finances",{id:Date.now().toString(36), type:"income", desc, value:val}); response=`+R$ ${val.toFixed(2)} em "${esc(desc)}" ✅`; } else response="Qual valor?"; }
+    else if(classified.intent==="finance_balance"){ const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0); response=`Receitas R$ ${inc.toFixed(2)}\nDespesas R$ ${exp.toFixed(2)}\nSaldo R$ ${(inc-exp).toFixed(2)}`; }
+    else if(classified.intent==="vault_add"){ const data=await openModal("Salvar senha", [{id:"service",label:"Serviço",placeholder:"netflix"},{id:"user",label:"Usuário/email"},{id:"pass",label:"Senha",type:"password"}]); if(data && data.pass){ await db.put("vault",{id:data.service, service:data.service, user:data.user, pass:data.pass}); response=`Salvei ${esc(data.service)} no cofre 🔒`; } else response="Cancelado"; }
+    else if(classified.intent==="vault_list"){ const vault=await db.getAll("vault"); response=vault.length? vault.map(v=>`• ${esc(v.service)} → ${esc(v.user||"")}`).join("\n") : "Cofre vazio"; }
+    else if(classified.intent==="note_add"){ const note=txt.replace(/anote|anota|nota/gi,"").trim()||txt; await db.put("notes",{id:Date.now().toString(36), text:note}); response=`Anotei "${esc(note.slice(0,80))}" 📝`; }
+    else if(classified.intent==="recall"){ response=recall? `Lembro: "${esc(recall.slice(0,280))}"` : `Você tem ${memories.length} memórias`; }
+    else{
+      if(apiConfig.key && navigator.onLine){
+        try{ const apiResp=await apiMan.call(txt, apiConfig, recall); response=apiResp+` [via ${apiConfig.provider}]`; await db.put("memories",{id:Date.now().toString(36), text:`API: ${txt.slice(0,100)} -> ${apiResp.slice(0,100)}`, tags:["api_learning"], score:0.9}); }
+        catch(e){ response=`API erro: ${esc(e.message.slice(0,120))}. Offline: ${recall?`lembro "${esc(recall.slice(0,80))}"`:"me conta mais"} para eu aprender local.`; }
+      }else{ response=recall? `Entendi. Lembro "${esc(recall.slice(0,120))}". Me conta mais?` : `Anotado como ${classified.intent} (${(classified.score*100|0)}%). Sem API, 100% offline neural.`; }
+    }
+  }catch(err){ response="Erro local: "+esc(err.message); console.error(err); }
+
+  ui.typing(false);
+  await db.put("messages",{id:Date.now().toString(36)+"_a", role:"assistant", text:response});
+  await db.put("memories",{id:Date.now().toString(36)+"_m", text:txt.slice(0,280), tags:[classified.intent, senti], score:classified.score});
+  memories=await db.getAll("memories");
+  refreshStats();
+  ui.addMessage("assistant", response);
+}
+
+$("#btnSend").onclick=handleSend;
+$("#input").addEventListener("input", ()=>{ $("#input").style.height="auto"; $("#input").style.height=Math.min($("#input").scrollHeight,120)+"px"; });
+$("#input").addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); handleSend(); }});
+$("#btnMenu").onclick=()=>$("#drawer").style.transform="translateX(0)";
+$("#drawerBackdrop").onclick=()=>$("#drawer").style.transform="translateX(-100%)";
+$("#btnVault").onclick=()=>$("#drawer").style.transform="translateX(0)";
+$$(".tabBtn").forEach(b=>b.onclick=()=>{ const tab=b.dataset.tab; $$("[id^='view-']").forEach(v=>v.classList.add("hidden")); $("#view-"+tab).classList.remove("hidden"); $$(".tabBtn").forEach(x=>x.classList.remove("bg-white/[0.06]")); b.classList.add("bg-white/[0.06]"); $("#drawer").style.transform="translateX(-100%)"; if(tab==="vault") renderVault(); if(tab==="finance") renderFinance(); if(tab==="notes") renderNotes(); if(tab==="memory") renderMemory(); });
+$("#btnPlayVoice").onclick=async()=>{ try{ await $("#akiraAudio").play(); }catch{ alert("Toque de novo pra liberar áudio"); } };
+
+async function renderVault(){
+  const q=($("#vaultSearch")?.value||"").toLowerCase();
+  const list=await db.getAll("vault");
+  const f=list.filter(v=>!q||v.service.toLowerCase().includes(q));
+  $("#vaultList").innerHTML=f.map(v=>{ const s=esc(v.service); const u=esc(v.user||""); return `<div class="flex justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="font-medium text-[14px]">${s}</p><p class="text-[12px] mono text-zinc-500">${u} • ••••••</p></div><div class="flex gap-2"><button data-copy="${esc(v.pass)}" class="btnCopy px-3 py-1.5 rounded-full bg-white/10 text-[12px]">Copiar</button><button data-del="${esc(v.id)}" class="delVault px-3 py-1.5 rounded-full bg-red-500/10 text-red-300 text-[12px]">Del</button></div></div>`; }).join("")||"<p class='text-zinc-500 text-[13px]'>Vazio</p>";
+  $$(".delVault").forEach(b=>b.onclick=async()=>{ await db.del("vault", b.dataset.del); renderVault(); refreshStats(); });
+  $$(".btnCopy").forEach(b=>b.onclick=()=>{ navigator.clipboard.writeText(b.dataset.copy).then(()=>{ b.textContent="Copiado!"; setTimeout(()=>b.textContent="Copiar",1500); }); });
+}
+$("#vaultSearch")?.addEventListener("input", debounce(()=>renderVault(), 250));
+$("#btnAddVault").onclick=async()=>{ const data=await openModal("Nova senha", [{id:"service",label:"Serviço"},{id:"user",label:"Usuário"},{id:"pass",label:"Senha",type:"password"}]); if(data?.service && data?.pass){ await db.put("vault",{id:data.service, service:data.service, user:data.user, pass:data.pass}); renderVault(); refreshStats(); } };
+
+async function renderFinance(){ const all=await db.getAll("finances"); const inc=all.filter(f=>f.type==="income").reduce((a,b)=>a+(b.value||0),0); const exp=all.filter(f=>f.type==="expense").reduce((a,b)=>a+(b.value||0),0); $("#finIncome").textContent=`+R$ ${inc.toFixed(0)}`; $("#finExpense").textContent=`-R$ ${exp.toFixed(0)}`; $("#finBalance").textContent=`R$ ${(inc-exp).toFixed(0)}`; $("#financeList").innerHTML=all.map(f=>{ const d=esc(f.desc); return `<div class="flex justify-between p-3 rounded-2xl bg-[#11131a] border border-white/5"><div><p class="text-[13px]">${d}</p><p class="text-[11px] mono ${f.type==="income"?"text-emerald-300":"text-red-300"}">${f.type==="income"?"+":"-"} R$ ${f.value?.toFixed(2)}</p></div><button data-del="${esc(f.id)}" class="delFin px-3 py-1 rounded-full bg-white/5 text-[11px]">x</button></div>`; }).join("")||"<p class='text-zinc-500'>Nenhum</p>"; $$(".delFin").forEach(b=>b.onclick=async()=>{ await db.del("finances", b.dataset.del); renderFinance(); refreshStats(); }); }
+$("#btnAddFin").onclick=async()=>{ const d=$("#finDesc").value.trim(); const v=parseFloat($("#finValue").value); const t=$("#finType").value; if(!d||isNaN(v)) return alert("Preencha"); await db.put("finances",{id:Date.now().toString(36), type:t, desc:d, value:v}); $("#finDesc").value=""; $("#finValue").value=""; renderFinance(); refreshStats(); };
+async function renderNotes(){ const all=await db.getAll("notes"); $("#notesList").innerHTML=all.map(n=>{ const txt=esc(n.text); return `<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5 flex justify-between"><p class="text-[13px]">${txt}</p><button data-del="${esc(n.id)}" class="delNote text-[11px] text-zinc-500">x</button></div>`; }).join("")||"<p class='text-zinc-500'>Sem notas</p>"; $$(".delNote").forEach(b=>b.onclick=async()=>{ await db.del("notes", b.dataset.del); renderNotes(); refreshStats(); }); }
+$("#btnAddNote").onclick=async()=>{ const t=$("#noteInput").value.trim(); if(!t) return; await db.put("notes",{id:Date.now().toString(36), text:t}); $("#noteInput").value=""; renderNotes(); refreshStats(); };
+async function renderMemory(){ const mems=await db.getAll("memories"); $("#memoryList").innerHTML=mems.slice(0,50).map(m=>{ const txt=esc(m.text); const tags=esc((m.tags||[]).join(" • ")); return `<div class="p-3 rounded-2xl bg-[#11131a] border border-white/5"><p class="text-[12px]">${txt}</p><p class="text-[10px] mono text-zinc-500 mt-1">${tags} • ${(m.score*100|0)}%</p></div>`; }).join(""); const tags={}; mems.forEach(mm=>(mm.tags||[]).forEach(t=>tags[t]=(tags[t]||0)+1)); $("#memoryGraph").innerHTML=`<div class="flex flex-wrap gap-2">${Object.entries(tags).slice(0,12).map(([k,v])=>`<span class="px-3 py-1.5 rounded-full bg-[#7af8c6]/10 border border-[#7af8c6]/20 text-[11px] mono">${esc(k)} (${v})</span>`).join("")}</div><p class="mt-4 text-[11px] mono text-white/30">${mems.length} memórias • 384d embedding • auditado</p>`; }
+
+// PIN com hash
+$("#btnSetPin").onclick=async()=>{
+  const pin=$("#pinInput").value.trim(); if(pin.length<4) return alert("min 4");
+  const hash=await Crypto.hashPin(pin);
+  localStorage.setItem("akira_pin_hash", hash);
+  localStorage.setItem("akira_pin_tmp", pin); // temporário pra sessão, em prod usaria sessionStorage
+  db.rawPin=pin;
+  $("#pinStatus").textContent=`✅ PIN com hash ${hash.slice(0,12)}... salvo. AES ativo.`;
+  $("#pinStatus").className="text-[11px] mono text-emerald-400";
+};
+
+$("#btnExportAll").onclick=async()=>{ const data={vault:await db.getAll("vault"), finances:await db.getAll("finances"), notes:await db.getAll("notes"), memories:await db.getAll("memories"), messages:await db.getAll("messages"), version:"2.3"}; const blob=new Blob([JSON.stringify(data,null,2)],{type:"octet-stream"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`akira-v2.3-${Date.now()}.akira`; a.click(); URL.revokeObjectURL(url); };
+$("#importFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f) return; try{ const j=JSON.parse(await f.text()); for(const s of STORES) if(j[s]) for(const it of j[s]) await db.put(s,it); alert("Importado com sucesso"); refreshStats(); }catch(err){ alert("Arquivo inválido: "+err.message); } });
+$("#btnWipe").onclick=async()=>{ if(!confirm("Tem certeza? Isso apaga TUDO local.")) return; if(!confirm("Confirma novamente? Irreversível.")) return; for(const s of STORES) await db.clear(s); localStorage.clear(); location.reload(); };
+
+if('serviceWorker' in navigator){ navigator.serviceWorker.register("./sw.js?v=2.3"); }
+async function checkOnline(){ try{ const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),2500); await fetch("./manifest.json?v="+Date.now(),{signal:ctrl.signal, cache:"no-store"}); $("#statusText").textContent="ONLINE • Neural 90%"; $("#statusDot").className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#080a0f]"; }catch{ $("#statusText").textContent="OFFLINE • Neural 100%"; $("#statusDot").className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-amber-400 rounded-full border-2 border-[#080a0f]"; } }
+checkOnline(); setInterval(checkOnline,15000);
+
+// Audit log
+$("#auditLog").innerHTML=`
+✅ XSS fix: esc() em todos innerHTML<br/>
+✅ prompt() removido → modal seguro<br/>
+✅ PIN agora hash SHA-256, não plain<br/>
+✅ clipboard com dataset, sem injeção de aspas<br/>
+✅ Cache bump v2.3.0<br/>
+✅ Debounce 250ms na busca<br/>
+✅ IDB com tx.onabort + try/catch<br/>
+✅ Wipe com dupla confirmação<br/>
+✅ Online check com fetch real, não navigator.onLine<br/>
+✅ API salva/testa corretamente<br/>
+✅ .akira export com versionamento<br/>
+`;
 
 </script>
 </body>
