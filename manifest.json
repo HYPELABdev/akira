@@ -1,8 +1,8 @@
 {
-  "name": "AKIRA v2.3 Auditada",
+  "name": "AKIRA v2.7 System Prompt Pro",
   "short_name": "AKIRA",
-  "description": "v2.3 - 11 falhas corrigidas, neural local + API bridge",
-  "start_url": "./index.html?v=2.3",
+  "description": "System Prompt Pro: perfil financeiro, onboarding, pagamentos auto, BLOB, multi-key, 90% offline",
+  "start_url": "./index.html?v=2.7",
   "scope": "./",
   "display": "standalone",
   "background_color": "#080a0f",
